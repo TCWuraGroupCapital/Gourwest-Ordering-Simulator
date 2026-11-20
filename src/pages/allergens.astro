@@ -1,0 +1,169 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import { ALLERGEN_LABELS, CATEGORIES, MENU, type Allergen } from '../data/menu';
+
+const allergens = Object.keys(ALLERGEN_LABELS) as Allergen[];
+---
+
+<Base title="Allergen guide" description="Which Gourwest dishes contain gluten, soy, sesame, egg, milk, mustard or fish — the full allergen matrix for the standard recipes.">
+  <PageIntro label="Allergens" title="Allergen guide" lead="The major allergens in each standard recipe. Swapping a protein, sauce or extra can change this, so check each option too." />
+
+  <div class="wrap">
+    <div class="notice notice--bad warn">
+      <Icon name="triangle-alert" />
+      <p>
+        <strong>Shared kitchens.</strong> All dishes are prepared in kitchens that handle every allergen listed here, plus tree nuts and peanuts in some sauces.
+        Meals are not certified allergen-free, halal or gluten-free. If your allergy is severe, call the kitchen before ordering.
+      </p>
+    </div>
+
+    <ul class="by-dish" role="list" aria-label="Allergens by dish">
+      {
+        MENU.map((item) => (
+          <li>
+            <a href={`/menu/${item.slug}/`}>{item.name}</a>
+            <span class="small muted">
+              {item.allergens.length ? `Contains ${item.allergens.map((a) => ALLERGEN_LABELS[a].toLowerCase()).join(', ')}` : 'None of the listed allergens'}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="table-wrap" role="region" aria-labelledby="matrix-caption" tabindex="0">
+      <table class="matrix">
+        <caption id="matrix-caption">Allergens present in standard recipes (demo data)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Dish</th>
+            {allergens.map((a) => <th scope="col">{ALLERGEN_LABELS[a]}</th>)}
+          </tr>
+        </thead>
+        {
+          CATEGORIES.map((c) => (
+            <tbody>
+              <tr class="group-row">
+                <th scope="colgroup" colspan={allergens.length + 1}>
+                  {c.title}
+                </th>
+              </tr>
+              {MENU.filter((m) => m.category === c.id).map((item) => (
+                <tr>
+                  <th scope="row">
+                    <a href={`/menu/${item.slug}/`}>{item.name}</a>
+                  </th>
+                  {allergens.map((a) =>
+                    item.allergens.includes(a) ? (
+                      <td class="yes">
+                        <Icon name="circle-alert" size={18} label={`Contains ${ALLERGEN_LABELS[a]}`} />
+                      </td>
+                    ) : (
+                      <td class="no">
+                        <span class="visually-hidden">No {ALLERGEN_LABELS[a]}</span>
+                        <span aria-hidden="true">–</span>
+                      </td>
+                    ),
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          ))
+        }
+      </table>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .warn {
+    margin-bottom: var(--s-6);
+  }
+  /* Phones get a per-dish list; the matrix needs about 44rem. */
+  .by-dish {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .by-dish li {
+    display: grid;
+    gap: var(--s-1);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .by-dish a {
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .table-wrap {
+    display: none;
+  }
+  @media (min-width: 760px) {
+    .by-dish {
+      display: none;
+    }
+    .table-wrap {
+      display: block;
+    }
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    background: var(--surface);
+  }
+  .matrix {
+    width: 100%;
+    min-width: 44rem;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+  caption {
+    padding: var(--s-4) var(--s-5);
+    text-align: left;
+    font-weight: 700;
+    color: var(--fg-2);
+  }
+  th,
+  td {
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  thead th {
+    font-size: var(--step--1);
+    font-weight: 700;
+    color: var(--fg-2);
+    background: var(--surface-2);
+  }
+  th[scope='row'],
+  thead th:first-child {
+    text-align: left;
+  }
+  th[scope='row'] a {
+    font-weight: 600;
+    color: var(--forest-deep);
+    text-decoration: none;
+  }
+  th[scope='row'] a:hover {
+    text-decoration: underline;
+  }
+  .group-row th {
+    text-align: left;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--gold);
+    background: var(--bg);
+  }
+  .yes {
+    color: var(--terracotta);
+  }
+  .yes :global(svg) {
+    margin-inline: auto;
+  }
+  .no {
+    color: var(--fg-3);
+  }
+</style>

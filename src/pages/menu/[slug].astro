@@ -1,0 +1,610 @@
+---
+import Base from '../../layouts/Base.astro';
+import FoodPhoto from '../../components/FoodPhoto.astro';
+import Icon from '../../components/Icon.astro';
+import Faq from '../../components/Faq.astro';
+import { dishFaqs, dishNode } from '../../lib/seo';
+import { ALLERGEN_LABELS, CATEGORIES, DIETARY_LABELS, MENU, findItem, type MenuItem } from '../../data/menu';
+import { MAX_NOTE, defaultChoices, formatAUD } from '../../lib/pricing';
+
+export function getStaticPaths() {
+  return MENU.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+}
+
+interface Props {
+  item: MenuItem;
+}
+const { item } = Astro.props;
+const defaults = defaultChoices(item);
+const category = CATEGORIES.find((c) => c.id === item.category)!;
+const pairing = item.category === 'drinks' ? undefined : findItem('yuzu-sparkling-brew');
+/** The pre-picked option of a single-choice group: such groups render folded (see the .js rules below). */
+const preset = (groupId: string) => {
+  const group = item.groups.find((g) => g.id === groupId)!;
+  return group.kind === 'single' ? group.options.find((o) => o.id === defaults[groupId]?.[0]) : undefined;
+};
+const surcharge = (groupId: string, price: number) => {
+  const group = item.groups.find((g) => g.id === groupId)!;
+  if (group.kind === 'multi') return price;
+  const base = group.options.find((o) => o.id === item.defaults[groupId])?.price ?? 0;
+  return Math.max(0, price - base);
+};
+
+---
+
+<Base
+  title={item.name}
+  description={`${item.description} ${formatAUD(item.price)} AUD — customise and order for pickup.`}
+  image={item.photo ? `/images/food/${item.photo.src}-1200.webp` : undefined}
+  schema={[dishNode(item, Astro.site!)]}
+>
+  <div class="wrap">
+    <nav class="crumbs small" aria-label="Breadcrumb">
+      <a href="/menu/"><Icon name="arrow-left" size={16} /> Menu</a>
+      <span aria-hidden="true">/</span>
+      <a href={`/menu/#${category.id}`}>{category.title}</a>
+    </nav>
+  </div>
+
+  <form class="wrap item" data-customiser data-slug={item.slug} novalidate>
+    <aside class="item__info">
+      {
+        item.photo && (
+          <div class="item__media">
+            <FoodPhoto photo={item.photo} sizes="(min-width: 960px) 460px, 100vw" class="item__img" eager />
+            {item.badge && <span class="tag tag--promo item__badge">{item.badge}</span>}
+          </div>
+        )
+      }
+      <div class="item__card">
+        <div class="item__title">
+          <h1>{item.name}</h1>
+          <span class="item__price num">{formatAUD(item.price)}</span>
+        </div>
+        <p class="muted">{item.description}</p>
+        <ul class="item__facts" role="list">
+          <li class="tag num">{item.kcal} kcal</li>
+          <li class="tag num">{item.proteinG} g protein</li>
+          {item.dietary.map((d) => <li class="tag">{DIETARY_LABELS[d]}</li>)}
+        </ul>
+        <div class="notice">
+          <Icon name="info" />
+          <p>
+            <strong>Allergens:</strong>{' '}
+            {item.allergens.length ? `contains ${item.allergens.map((a) => ALLERGEN_LABELS[a].toLowerCase()).join(', ')}.` : 'none of the major allergens in the recipe.'}{' '}
+            Prepared on shared equipment. <a href="/allergens/">Allergen guide</a>
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <div class="item__options">
+      {
+        item.groups.length > 0 && (
+          <div class="item__intro">
+            <p class="label">Made your way</p>
+            <h2>Customise your {item.category === 'bowls' ? 'bowl' : item.category === 'wraps' ? 'wrap' : 'plate'}</h2>
+          </div>
+        )
+      }
+      {
+        item.groups.map((group, gi) => (
+          <fieldset class:list={['group', { 'is-folded': preset(group.id) }]} data-group={group.id} data-kind={group.kind}>
+            <legend>
+              <span class="group__step num" aria-hidden="true">
+                {gi + 1}
+              </span>
+              <span class="group__title">{group.title}</span>
+              <span class={`group__req small ${group.required ? 'is-req' : ''}`}>{group.required ? 'Required' : 'Optional'}</span>
+            </legend>
+            {group.kind === 'single' && (
+              <div class="group__chosen" data-chosen>
+                <span class="group__chosen-name" data-chosen-name>{preset(group.id)?.name}</span>
+                <span class="group__chosen-price small num" data-chosen-price>{preset(group.id) && 'Included'}</span>
+                <button class="btn btn--quiet group__change" type="button" aria-controls={`opts-${group.id}`} data-change>
+                  Change<span class="visually-hidden"> {group.title.toLowerCase()}</span>
+                </button>
+              </div>
+            )}
+            <p class="group__hint small muted">{group.hint}</p>
+            <div class="options" id={`opts-${group.id}`}>
+              {group.options.map((option) => {
+                const extra = surcharge(group.id, option.price);
+                const checked = defaults[group.id]?.includes(option.id);
+                return (
+                  <label class="option">
+                    <input
+                      type={group.kind === 'single' ? 'radio' : 'checkbox'}
+                      name={group.id}
+                      value={option.id}
+                      checked={checked}
+                      required={group.kind === 'single' && group.required}
+                    />
+                    <span class="option__text">
+                      <span class="option__name">{option.name}</span>
+                      {option.note && <span class="option__note small muted">{option.note}</span>}
+                    </span>
+                    <span class="option__price small num">{extra ? `+${formatAUD(extra)}` : group.kind === 'single' && checked ? 'Included' : ''}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        ))
+      }
+
+      {
+        item.groups.length > 0 && (
+          <div class="field group">
+            <label for="note">Note for the kitchen</label>
+            <textarea id="note" class="textarea" name="note" maxlength={MAX_NOTE} rows="3" placeholder="e.g. dressing on the side, no cutlery" />
+            <p class="hint">
+              Up to {MAX_NOTE} characters. For a severe allergy, call the kitchen before ordering — notes aren’t an allergy guarantee.
+            </p>
+          </div>
+        )
+      }
+
+      {
+        pairing && (
+          <div class="pairing">
+            <Icon name="sparkles" size={22} />
+            <div>
+              <p class="pairing__name">Pair it with a {pairing.name}</p>
+              <p class="small muted">{pairing.blurb}</p>
+            </div>
+            <button class="btn btn--quiet" type="button" data-quick-add={pairing.slug} aria-label={`Add ${pairing.name} to bag`}>
+              +{formatAUD(pairing.price)}
+            </button>
+          </div>
+        )
+      }
+
+      <p class="form-error notice notice--bad" role="alert" hidden data-error></p>
+    </div>
+
+    <div class="buy">
+      <div class="wrap buy__inner">
+        {item.groups.length > 0 && <p class="buy__summary small" data-summary>As the chef builds it</p>}
+        <div class="qty" role="group" aria-label="Quantity">
+          <button class="icon-btn" type="button" data-qty="-1" aria-label="Decrease quantity"><Icon name="minus" size={16} /></button>
+          <output class="qty__value num" data-qty-value aria-live="polite">1</output>
+          <button class="icon-btn" type="button" data-qty="1" aria-label="Increase quantity"><Icon name="plus" size={16} /></button>
+        </div>
+        <button class="btn btn--lg buy__add" type="submit" data-add>
+          <Icon name="shopping-bag" size={18} />
+          <span>Add to bag · <span class="num" data-total>{formatAUD(item.price)}</span></span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <Faq faqs={dishFaqs(item)} title={`About the ${item.name}`} />
+</Base>
+
+<script>
+  import { CartError, MAX_QTY, formatAUD, priceLine, type Choices } from '../../lib/pricing';
+  import { addToCart } from '../../scripts/state';
+  import { flash, toast } from '../../scripts/toast';
+
+  const form = document.querySelector<HTMLFormElement>('[data-customiser]')!;
+  const slug = form.dataset.slug!;
+  const total = form.querySelector<HTMLElement>('[data-total]')!;
+  const qtyOut = form.querySelector<HTMLOutputElement>('[data-qty-value]')!;
+  const errorBox = form.querySelector<HTMLElement>('[data-error]')!;
+  const summaryOut = form.querySelector<HTMLElement>('[data-summary]');
+  let qty = 1;
+
+  /*
+   * A single-choice group with a pick folds to one line ("Sushi rice · Included · Change"), so a bowl reads as
+   * the chef's build in one screen and only the groups you open take space. Groups with a preset render folded on
+   * the server (no layout shift); the .js gate keeps every group open when scripts don't run.
+   */
+  function fold(group: HTMLFieldSetElement, folded: boolean) {
+    const picked = group.querySelector<HTMLInputElement>('input:checked');
+    group.classList.toggle('is-folded', folded && Boolean(picked));
+    if (!picked) return;
+    const option = picked.closest('.option')!;
+    group.querySelector('[data-chosen-name]')!.textContent = option.querySelector('.option__name')!.textContent;
+    group.querySelector('[data-chosen-price]')!.textContent = option.querySelector('.option__price')!.textContent;
+  }
+
+  form.addEventListener('click', (event) => {
+    const change = (event.target as Element).closest<HTMLButtonElement>('[data-change]');
+    if (!change) return;
+    const group = change.closest<HTMLFieldSetElement>('[data-group]')!;
+    fold(group, false);
+    (group.querySelector<HTMLInputElement>('input:checked') ?? group.querySelector<HTMLInputElement>('input'))!.focus();
+  });
+
+  // A tap or click on a choice folds its group and moves on; arrow keys keep the group open so they can browse.
+  let pointerPick = false;
+  form.addEventListener('pointerdown', () => (pointerPick = true));
+  form.addEventListener('keydown', () => (pointerPick = false));
+  // "click" rather than "change": re-tapping the current choice should fold the group too.
+  form.addEventListener('click', (event) => {
+    const radio = (event.target as Element).closest<HTMLInputElement>('input[type="radio"]');
+    const group = radio?.closest<HTMLFieldSetElement>('[data-kind="single"]');
+    if (!group || !pointerPick) return;
+    fold(group, true);
+    group.querySelector<HTMLElement>('[data-change]')!.focus({ preventScroll: true });
+  });
+
+  /** Back to the list you came from, so ordering a second dish starts where you left off. */
+  function cameFromList(): boolean {
+    try {
+      const from = new URL(document.referrer);
+      return from.origin === location.origin && (from.pathname === '/menu/' || from.pathname === '/') && history.length > 1;
+    } catch {
+      return false;
+    }
+  }
+
+  function readChoices(): Choices {
+    const choices: Choices = {};
+    form.querySelectorAll<HTMLFieldSetElement>('[data-group]').forEach((fs) => {
+      if (!fs.dataset.kind) return;
+      choices[fs.dataset.group!] = [...fs.querySelectorAll<HTMLInputElement>('input:checked')].map((i) => i.value);
+    });
+    return choices;
+  }
+
+  const note = () => form.querySelector<HTMLTextAreaElement>('textarea[name="note"]')?.value ?? '';
+
+  function update() {
+    errorBox.hidden = true;
+    try {
+      const line = priceLine({ slug, qty, choices: readChoices(), note: note() });
+      total.textContent = formatAUD(line.total);
+      if (summaryOut) summaryOut.textContent = line.summary.length ? line.summary.join(' · ') : 'As the chef builds it';
+    } catch (error) {
+      if (!(error instanceof CartError)) throw error;
+    }
+    qtyOut.textContent = String(qty);
+    form.querySelector<HTMLButtonElement>('[data-qty="-1"]')!.disabled = qty <= 1;
+    form.querySelector<HTMLButtonElement>('[data-qty="1"]')!.disabled = qty >= MAX_QTY;
+  }
+
+  form.addEventListener('change', update);
+  form.querySelectorAll<HTMLButtonElement>('[data-qty]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      qty = Math.min(MAX_QTY, Math.max(1, qty + Number(btn.dataset.qty)));
+      update();
+    }),
+  );
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    try {
+      const line = addToCart({ slug, qty, choices: readChoices(), note: note() });
+      const message = `${qty} × ${line.name} added to your bag`;
+      if (cameFromList()) {
+        flash(message);
+        history.back();
+      } else toast(message);
+    } catch (error) {
+      if (!(error instanceof CartError)) throw error;
+      errorBox.textContent = error.message;
+      errorBox.hidden = false;
+      errorBox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  });
+
+  update();
+</script>
+
+<style>
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding-block: var(--s-4);
+    color: var(--fg-2);
+  }
+  .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    min-height: 44px;
+    color: var(--forest);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    text-decoration: underline;
+  }
+  .item {
+    display: grid;
+    gap: var(--s-6);
+    padding-bottom: 8rem;
+  }
+  @media (min-width: 960px) {
+    .item {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: start;
+      gap: var(--s-7);
+    }
+  }
+  /* Sticky only where the photo, facts and allergen notice fit above the buy bar. */
+  @media (min-width: 960px) and (min-height: 900px) {
+    .item__info {
+      position: sticky;
+      top: 128px;
+    }
+  }
+  .item__info {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .item__media {
+    position: relative;
+    /* Pairs with the menu card's photo for the card-to-dish morph (see Base.astro). */
+    view-transition-name: dish-hero;
+  }
+  .item__media :global(.item__img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--r-2);
+  }
+  .item__badge {
+    position: absolute;
+    top: var(--s-4);
+    left: var(--s-4);
+  }
+  .item__card {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .item__title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .item__title h1 {
+    font-size: var(--step-3);
+  }
+  .item__price {
+    flex: none;
+    font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .item__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+  }
+  .item__options {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .item__intro h2 {
+    font-size: var(--step-2);
+    margin-top: var(--s-1);
+  }
+  .group {
+    margin: 0;
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    background: var(--surface);
+    min-width: 0;
+  }
+  .group legend {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    width: 100%;
+    padding: 0;
+    float: left;
+  }
+  .group legend + * {
+    clear: both;
+  }
+  .group__step {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--on-forest);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .group__title {
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+  .group__req {
+    margin-left: auto;
+    color: var(--fg-2);
+    font-weight: 600;
+  }
+  .group__req.is-req {
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--r-pill);
+    background: var(--surface-2);
+    color: var(--forest);
+  }
+  .group__hint {
+    margin: var(--s-2) 0 var(--s-4);
+  }
+  :global(.js) .group.is-folded > :is(.group__hint, .options) {
+    display: none;
+  }
+  .group__chosen {
+    display: none;
+  }
+  :global(.js) .group.is-folded > .group__chosen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0 var(--s-3);
+    margin-top: var(--s-3);
+    padding-left: calc(28px + var(--s-3));
+  }
+  .group__chosen-name {
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+  .group__chosen-price {
+    grid-row: 2;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .group__chosen-price:empty {
+    display: none;
+  }
+  .group__change {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    padding-inline: var(--s-4);
+  }
+  .options {
+    display: grid;
+    gap: var(--s-2);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  }
+  .option {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 56px;
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-1);
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color var(--t-micro) var(--ease-out), background-color var(--t-micro) var(--ease-out);
+  }
+  .option:hover {
+    border-color: var(--line-strong);
+  }
+  .option:has(input:checked) {
+    border-color: var(--forest);
+    background: color-mix(in oklch, var(--forest) 7%, var(--surface));
+    box-shadow: inset 0 0 0 1px var(--forest);
+  }
+  .option:has(input:focus-visible) {
+    box-shadow: var(--focus);
+  }
+  .option input {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    accent-color: var(--forest);
+  }
+  .option__text {
+    display: grid;
+    min-width: 0;
+  }
+  .option__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+  .option__price {
+    font-weight: 700;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .pairing {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-4) var(--s-5);
+    border-radius: var(--r-2);
+    background: var(--surface-2);
+  }
+  .pairing > :global(svg) {
+    color: var(--gold);
+  }
+  .pairing__name {
+    font-weight: 700;
+  }
+  .buy {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 40;
+    padding-block: var(--s-3) calc(var(--s-3) + env(safe-area-inset-bottom));
+    background: color-mix(in oklch, var(--surface) 94%, transparent);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+  }
+  .buy__inner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--s-4);
+  }
+  /* What you've changed from the chef's build, always in view next to the price it produces. */
+  .buy__summary {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--fg-2);
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .qty {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .qty__value {
+    min-width: 2ch;
+    text-align: center;
+    font-weight: 700;
+    font-size: var(--step-1);
+  }
+  .buy__add {
+    flex: 0 1 22rem;
+  }
+  /* Keyboard focus and in-page jumps stop above the fixed buy bar instead of underneath it. */
+  :global(html:has(.buy)) {
+    scroll-padding-bottom: 8rem;
+  }
+  /* Lift the concierge button above the buy bar so it never covers "Add to bag". */
+  :global(body:has(.buy) .concierge-fab) {
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+  /* Phones: no floating concierge over the options' Change buttons; the menu toolbar carries it instead. */
+  @media (max-width: 639px) {
+    :global(body:has(.buy) .concierge-fab) {
+      display: none;
+    }
+  }
+  @media (max-width: 520px) {
+    .buy__inner {
+      flex-wrap: wrap;
+      gap: var(--s-2) var(--s-4);
+    }
+    .buy__summary {
+      flex-basis: 100%;
+    }
+    .buy__add {
+      flex: 1;
+      padding-inline: var(--s-3);
+    }
+  }
+  @media (max-width: 639px) {
+    .group {
+      padding: var(--s-4);
+    }
+    .group__chosen {
+      padding-left: 0;
+    }
+    .option {
+      min-height: 52px;
+      padding: var(--s-2) var(--s-3);
+    }
+  }
+</style>

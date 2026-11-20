@@ -1,0 +1,147 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import { FOOD_FAQ, KITCHENS_FAQ } from '../lib/seo';
+import { STORES } from '../data/stores';
+
+const timeline = [
+  { year: '2016', text: 'One open grill and six bowls on Flinders Lane, Melbourne.' },
+  { year: '2019', text: 'Melbourne Central and Southbank kitchens open; the Seoul BBQ bowl becomes our bestseller.' },
+  { year: '2022', text: 'First kitchen outside Australia at Commercial Bay, Auckland.' },
+  { year: '2024', text: 'Orchard Gateway in Singapore and Suria KLCC in Kuala Lumpur join the family.' },
+];
+const principles = [
+  { icon: 'leaf', title: 'Seasonal first', text: 'Produce is bought from growers near each kitchen and the menu bends with the seasons.' },
+  { icon: 'flame', title: 'Cooked to order', text: 'Proteins are marinated overnight and charred when you order, never held under lamps.' },
+  { icon: 'globe', title: 'Recipes that travel', text: 'Every dish starts with a street-food classic and is rebuilt with local ingredients.' },
+] as const;
+const faqs = [
+  { q: 'Where did Gourwest start?', a: `In ${timeline[0].year}, with ${timeline[0].text[0].toLowerCase()}${timeline[0].text.slice(1)} Today Gourwest cooks in ${STORES.length} kitchens.` },
+  FOOD_FAQ,
+  { q: 'Is Gourwest food cooked to order?', a: `Yes. ${principles[1].text}` },
+  KITCHENS_FAQ,
+];
+---
+
+<Base title="Our story" description="Gourwest began on Melbourne's Flinders Lane in 2016 and now cooks global street-food classics in five kitchens across four countries.">
+  <PageIntro label="Our story" title="Born in Melbourne. Shared with the world." lead="Gourwest started with one belief: good food shouldn’t compromise on speed, origin or soul." />
+
+  <div class="wrap">
+    <img class="hero-img" src="/images/food/kitchen-1200.webp" srcset="/images/food/kitchen-640.webp 640w, /images/food/kitchen-1200.webp 1200w" sizes="(min-width: 1280px) 1200px, 100vw" width="1408" height="768" alt="Gourwest chefs plating bowls at the open kitchen pass" fetchpriority="high" />
+  </div>
+
+  <section class="section" aria-labelledby="principles-title">
+    <div class="wrap">
+      <h2 id="principles-title" class="reveal">What we cook by</h2>
+      <ul class="principles" role="list">
+        {
+          principles.map((p) => (
+            <li class="reveal">
+              <Icon name={p.icon} size={28} />
+              <h3>{p.title}</h3>
+              <p class="muted">{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-labelledby="timeline-title">
+    <div class="wrap story">
+      <div>
+        <p class="label">Timeline</p>
+        <h2 id="timeline-title">From one grill to {STORES.length} kitchens</h2>
+      </div>
+      <ol class="timeline" role="list">
+        {
+          timeline.map((t) => (
+            <li class="reveal">
+              <span class="timeline__year num">{t.year}</span>
+              <p>{t.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="next-title">
+    <div class="wrap next">
+      <h2 id="next-title">Taste the story</h2>
+      <p class="lead">Start with the bowl that started it all.</p>
+      <div class="next__actions">
+        <a class="btn btn--lg" href="/menu/seoul-bbq-chicken-bowl/">Order the Seoul BBQ bowl</a>
+        <a class="btn btn--lg btn--ghost" href="/locations/">Visit a kitchen</a>
+      </div>
+      <p class="small muted">Gourwest is a fictional demonstration brand; this history is part of the demo.</p>
+    </div>
+  </section>
+  <Faq faqs={faqs} tint />
+</Base>
+
+<style>
+  .hero-img {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: var(--r-2);
+  }
+  .principles {
+    display: grid;
+    gap: var(--s-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin: var(--s-6) 0 0;
+    padding: 0;
+  }
+  .principles li {
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    padding-top: var(--s-4);
+    border-top: 2px solid var(--gold-bright);
+  }
+  .principles :global(svg) {
+    color: var(--forest);
+  }
+  .story {
+    display: grid;
+    gap: var(--s-6);
+  }
+  @media (min-width: 900px) {
+    .story {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+  .timeline {
+    display: grid;
+    margin: 0;
+    padding: 0;
+  }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: var(--s-4);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .timeline__year {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .next {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+  }
+  .next__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+</style>

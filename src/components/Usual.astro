@@ -1,0 +1,83 @@
+---
+/** "Your usual": one tap puts the last order placed on this device back in the bag. Hidden until there is one. */
+---
+
+<div class="usual" hidden data-usual>
+  <div class="usual__text">
+    <p class="label">Your usual</p>
+    <p class="usual__items" data-usual-items></p>
+  </div>
+  <div class="usual__actions">
+    <button class="btn" type="button" data-usual-add>Add to bag · <span class="num" data-usual-total></span></button>
+    <button class="btn btn--quiet" type="button" data-usual-forget>Forget</button>
+  </div>
+</div>
+
+<script>
+  import { formatAUD } from '../lib/pricing';
+  import { EVENT, addToCart, forgetUsual, getUsual } from '../scripts/state';
+  import { toast } from '../scripts/toast';
+
+  const boxes = document.querySelectorAll<HTMLElement>('[data-usual]');
+
+  function render() {
+    const lines = getUsual();
+    boxes.forEach((box) => {
+      box.hidden = lines.length === 0;
+      if (!lines.length) return;
+      box.querySelector('[data-usual-items]')!.textContent = lines.map((l) => (l.qty > 1 ? `${l.name} ×${l.qty}` : l.name)).join(', ');
+      box.querySelector('[data-usual-total]')!.textContent = formatAUD(lines.reduce((sum, l) => sum + l.total, 0));
+    });
+  }
+
+  boxes.forEach((box) => {
+    const add = box.querySelector<HTMLButtonElement>('[data-usual-add]')!;
+    add.addEventListener('click', () => {
+      // A double tap would silently double the bag; re-enable after a beat for a deliberate second round.
+      add.disabled = true;
+      setTimeout(() => (add.disabled = false), 1200);
+      const lines = getUsual();
+      lines.forEach(({ slug, qty, choices }) => addToCart({ slug, qty, choices }));
+      toast(lines.length === 1 ? `${lines[0].name} added to your bag` : 'Your usual is in your bag');
+    });
+    box.querySelector('[data-usual-forget]')!.addEventListener('click', () => {
+      forgetUsual();
+      toast('Your usual is forgotten on this device');
+    });
+  });
+
+  window.addEventListener(EVENT, render);
+  render();
+</script>
+
+<style>
+  /* Wraps on its own width, not the viewport's: it sits in narrow columns as well as wide ones. */
+  .usual {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3) var(--s-5);
+    width: 100%;
+    padding: var(--s-4) var(--s-5);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-2);
+    background: var(--surface);
+  }
+  .usual[hidden] {
+    display: none;
+  }
+  .usual__text {
+    flex: 1 1 14rem;
+    min-width: 0;
+  }
+  .usual__items {
+    margin-top: var(--s-1);
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+  .usual__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+</style>

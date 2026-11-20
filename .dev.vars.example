@@ -1,0 +1,10 @@
+# Copy to .dev.vars for `npm run preview` (never commit .dev.vars).
+# Must equal GOURWEST_WEBHOOK_SECRET in the Luminara CRM .env (set it there explicitly, then restart the CRM).
+GOURWEST_WEBHOOK_SECRET=change-me-to-a-long-random-string
+# The Luminara CRM Docker app on this machine (compose.yaml maps it to 127.0.0.1:8888 here; the spec says 8088).
+CRM_BASE_URL=http://127.0.0.1:8888
+# Numeric id of the Krayin web form that stores catering/contact enquiries as leads. Enquiries return 503 without it.
+CRM_WEB_FORM_ID=
+# Optional: AI menu concierge. Groq answers first, NVIDIA NIM is the fallback; with neither, the built-in recommender answers.
+GROQ_API_KEY=
+NVIDIA_API_KEY=

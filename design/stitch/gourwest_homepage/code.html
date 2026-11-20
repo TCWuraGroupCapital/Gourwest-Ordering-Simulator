@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-on-surface": "#eff2eb", "tertiary": "#431100", "on-primary-fixed": "#002117", "surface-dim": "#d8dbd5", "outline-variant": "#c1c8c3", "on-primary": "#ffffff", "outline": "#717975", "on-tertiary": "#ffffff", "primary-fixed-dim": "#a6cfbf", "on-secondary": "#ffffff", "primary-container": "#173e32", "background": "#f7faf4", "surface-container-lowest": "#ffffff", "surface-variant": "#e0e3dd", "secondary": "#725c20", "secondary-fixed-dim": "#e1c37d", "secondary-container": "#ffdf96", "tertiary-fixed": "#ffdbcf", "error": "#ba1a1a", "inverse-surface": "#2d312d", "tertiary-fixed-dim": "#ffb59b", "on-secondary-fixed": "#251a00", "surface-container-highest": "#e0e3dd", "secondary-fixed": "#ffdf96", "on-error-container": "#93000a", "on-surface-variant": "#414845", "on-tertiary-container": "#e98662", "primary": "#00281d", "on-secondary-fixed-variant": "#584409", "on-surface": "#191d19", "tertiary-container": "#652105", "on-error": "#ffffff", "surface-tint": "#406658", "inverse-primary": "#a6cfbf", "on-background": "#191d19", "surface-container": "#ecefe8", "primary-fixed": "#c2ecda", "surface-container-high": "#e6e9e3", "on-primary-container": "#81a999", "on-tertiary-fixed": "#380d00", "on-primary-fixed-variant": "#284e41", "on-secondary-container": "#786226", "on-tertiary-fixed-variant": "#793013", "error-container": "#ffdad6", "surface": "#f7faf4", "surface-container-low": "#f2f5ee", "surface-bright": "#f7faf4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "1rem", "space-sm": "0.5rem", "space-xl": "2.5rem", "margin-mobile": "1rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem", "space-lg": "1.5rem", "margin": "2.5rem" }, "fontFamily": { "display-lg-mobile": ["Playfair Display"], "headline-md": ["Playfair Display"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Playfair Display"], "display-lg": ["Playfair Display"], "headline-lg": ["Playfair Display"], "body-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, "fontSize": { "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "0em", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-primary-container text-on-primary py-space-xs px-margin-mobile lg:px-margin text-center font-label-sm uppercase tracking-wider flex items-center justify-center gap-space-sm"><span class="material-symbols-outlined text-[16px] text-secondary-container">bolt</span><span>✨ Pick up in 15 mins at Gourwest Melbourne Central · Free delivery on your first order over $35 AUD</span></div><div class="h-20 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><a class="flex items-center gap-space-sm focus:outline-none" data-path="menu" href="#"><img alt="Gourwest logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDwphynppR0fZFqa1lttJRpc5ASogx_cJ97QAHDA0DSARbrYhsTuvbT7rO7mAiBtmjsQhtPzYRS8kPsutG9hTUKc8ucODviTCMQErqwnL3NU1dG8eGwRL1h81zLEctqIAvh6CXZKhqdxv6-eXlk2yCmbn1M19e8VciAij8Mf1FS1LGPtp-NYsQIsNY-r_LMYfQC1fql-SuALyiino6IUxAqDF7w2lTruDq-1ogk4_EtHnzrJsrdkqew4TE"/><div class="flex flex-col"><span class="font-headline-sm text-primary tracking-tight font-bold">GOURWEST</span><span class="font-label-sm text-secondary tracking-normal font-medium hidden sm:inline-block">Flavours united. Worldwide.</span></div></a></div><nav class="hidden lg:flex items-center gap-space-lg font-label-lg" data-active-classes="text-primary font-bold after:w-full"><a aria-current="page" class="transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-primary after:transition-all text-primary font-bold after:w-full" data-path="menu" href="#">Menu</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="our-story" href="#">Our Story</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="locations" href="#">Locations</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="rewards" href="#">Rewards</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="catering" href="#">Catering</a></nav><div class="flex items-center gap-space-sm sm:gap-space-md shrink-0"><button class="hidden sm:flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md transition-colors" type="button"><span class="text-[14px]">🇦🇺</span><span>Australia (AUD)</span><span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span></button><a class="relative flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface" data-path="cart" href="#"><span class="material-symbols-outlined text-[20px] text-primary">shopping_bag</span><span class="hidden md:inline font-label-md text-on-surface">2 items · $34.80 AUD</span><span class="md:hidden flex items-center justify-center w-4 h-4 rounded-full bg-secondary text-on-secondary font-label-sm text-[9px]">2</span></a><a class="hidden sm:inline-flex items-center justify-center px-space-md py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-lg transition-all shadow-[0_2px_8px_rgba(23,62,50,0.15)] ring-1 ring-secondary-container/40" data-path="menu" href="#">Order online</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1 shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden bg-surface-container-low pt-6 pb-16 lg:py-20">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<!-- Breadcrumb / Announcement Tag -->
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-surface-container-high text-primary font-label-md mb-6 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>48 Restaurants across Australia, NZ, Singapore & Malaysia</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg lg:gap-space-xl items-center">
+<!-- Hero Text Content -->
+<div class="lg:col-span-6 flex flex-col items-start space-y-6">
+<div class="space-y-3">
+<span class="font-label-md uppercase tracking-widest text-secondary font-bold">Dine in · Pick up · Make it yours</span>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight leading-tight">
+              Global flavours. <br class="hidden sm:inline"/>
+<span class="italic font-normal">Your local favourite.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed pt-2">
+              Fresh bowls, bold wraps and flame-grilled favourites—inspired by global kitchens, crafted with wholesome seasonal produce for your everyday dining.
+            </p>
+</div>
+<!-- Pickup Search Bar -->
+<div class="w-full max-w-lg bg-surface-container-lowest p-2 rounded-xl shadow-md flex flex-col sm:flex-row items-center gap-2">
+<div class="flex items-center gap-space-xs px-space-sm w-full">
+<span class="material-symbols-outlined text-outline text-[20px]">location_on</span>
+<input class="w-full bg-transparent font-body-md text-on-surface placeholder:text-outline focus:outline-none py-2" placeholder="Find nearest restaurant (e.g. Melbourne Central)..." type="text"/>
+</div>
+<a class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center px-space-lg py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-lg transition-all shadow-sm" data-path="menu" href="#">
+              Start order
+            </a>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-space-md pt-2">
+<a class="inline-flex items-center gap-space-sm px-space-lg py-3 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-lg transition-transform hover:-translate-y-0.5 shadow-md" data-path="menu" href="#">
+<span>Explore the menu</span>
+<span class="material-symbols-outlined text-secondary-container text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-lg transition-colors" data-path="locations" href="#">
+<span class="material-symbols-outlined text-[18px]">storefront</span>
+<span>Find your Gourwest</span>
+</a>
+</div>
+<!-- Trust Signals -->
+<div class="pt-4 flex items-center gap-space-lg text-on-surface-variant font-label-sm uppercase tracking-wider">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span>15 Min Ready Guarantee</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span>100% Responsibly Sourced</span>
+</div>
+</div>
+</div>
+<!-- Culinary Spread Imagery -->
+<div class="lg:col-span-6 relative">
+<div class="relative w-full rounded-2xl overflow-hidden shadow-xl bg-surface-container">
+<img class="w-full h-[420px] lg:h-[480px] object-cover transition-transform duration-700 hover:scale-105" data-alt="Editorial overhead table photograph of Gourwest feast with Korean BBQ chicken bowl, handmade falafel bowl, herb seasoned crispy chips, dipping sauces, and fresh cut lemon on a rustic linen tablecloth in warm daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2ixDcBncQONnaHx_5xwBW2-kD4HmaxtXGCkeGz8qpQEh1V1jNROOq12r2PuAzQMGQvhL028fGyiOwaS0-4H8qBpUWPZcKDy24hYJt2zEMu78jlAEbhByh7hubrkRtOhc8V8p3docahZvBnfRUR809zO_KZIkOzzpVeP8kzna64mR4SH4Lek_da4H5wXNIqbZ_nDlY7HPypoI5pvVkkP40LCsdSHi77bOizIX0ubPB"/>
+<!-- Atmospheric Badge Overlay -->
+<div class="absolute bottom-4 left-4 right-4 bg-surface-container-lowest/90 backdrop-blur-md p-4 rounded-xl shadow-md flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-primary">Made to Order Daily</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Scratch-made sauces & flame-grilled proteins</div>
+</div>
+</div>
+<span class="font-label-md text-secondary font-bold uppercase hidden sm:block">Fresh & Fast</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SIGNATURE DISHES SECTION -->
+<section class="w-full py-16 lg:py-24 bg-surface">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+<div class="space-y-2">
+<span class="font-label-md uppercase tracking-widest text-secondary font-bold">Crafted For Every Craving</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Signature Dishes</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+            Our most-loved culinary creations, perfected with balanced textures, bold seasonings, and vibrant whole ingredients.
+          </p>
+</div>
+<a class="hidden md:inline-flex items-center gap-1 font-label-lg text-primary hover:text-secondary transition-colors mt-4 md:mt-0" data-path="menu" href="#">
+<span>View entire menu</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 4 Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Seoul BBQ Chicken Bowl in a ceramic bowl with charred chicken slices, toasted sesame seeds, fresh spring onions, sushi rice, and vibrant crunchy slaw" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoe9xIFxZf66Z3nuVvBEAP1-VfL5nfdtqB4qHuxtSKOAkrMcCHpKRMOOuDihQ5sAdS0FY4L9dpcYLCywZRjRycwmZnNcmSlpSUc3IUkk1NADX22HQHrCELJEXzIoVIj8dPll5Ypt-KjmheijkyoPqbMZH1xneGJyIS19Vc53QxaUTvtpTkef7DdOdDqSerXbDw0u766g_74VYpKFyW6CbZWBU0Vu1UJATTiyEn0OHw"/>
+<span class="absolute top-3 left-3 bg-tertiary-container text-on-primary font-label-sm uppercase px-2.5 py-1 rounded-full shadow-sm">
+              Popular
+            </span>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+<div class="space-y-2">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Seoul BBQ Chicken</h3>
+<span class="font-headline-sm text-primary font-bold">$17.90</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3 leading-relaxed">
+                Korean-inspired BBQ chicken, charred sesame, sushi rice, crunchy rainbow slaw, cucumber and signature toasted sesame dressing.
+              </p>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-outline">580 kcal</span>
+<a class="inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-md transition-colors shadow-sm" data-path="menu" href="#">
+<span>Order now</span>
+<span class="material-symbols-outlined text-[16px]">add</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Handcrafted Mediterranean Falafel Bowl with golden falafel balls, ancient quinoa, rich hummus, diced vine tomatoes, and pickled red onions" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeCJRLvCqfk2AfEMgoxMQD1EaRCEkhXQaQ_IyIAt6GN0nUgC9bIQ5jhW4oRqGpIeKde2wnjEsKgk4xtWGZ3F3TrwkHpjfwsijZW8mmKncmiNRmx63dGReMPlFwWm7jbD0dbn7LNMZnaufQlzuTNf5hQDS45l7Zg3l7NvA8rReahKdKxn1arv1jLc6d9-lEGpNd2MVOXvTDEzQNOmyCXRuJ6dz-z3UPOOrht9c7LX1k"/>
+<span class="absolute top-3 left-3 bg-secondary-container text-on-secondary-container font-label-sm uppercase px-2.5 py-1 rounded-full shadow-sm">
+              Vegetarian
+            </span>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+<div class="space-y-2">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Mediterranean Falafel</h3>
+<span class="font-headline-sm text-primary font-bold">$16.90</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3 leading-relaxed">
+                Golden handcrafted falafel, ancient grains, vine tomato, Lebanese cucumber, pickled red onion and velvety creamy lemon tahini.
+              </p>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-outline">520 kcal</span>
+<a class="inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md transition-colors" data-path="menu" href="#">
+<span>Customise</span>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Smoky Chipotle Beef Bowl with tender shredded beef, seasoned brown rice, charred corn salsa, black turtle beans, and avocado" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiBq7aTsWolFr3_jHWiZu841YfjZAxxPGDspICzdTU5YFC76wKygQp7vTkql8KxomfkQ0BUV8o1OW5yaJeqKT_1BcMkYRhXWHKyoEI2sLw3AVKzreMx01BZqs7gO9-QMlH9CveC1QTwYVVmSKDxyNZuDf3SDjCk0pT_hDUIa02w_RfEHB5a4wr2kOo9ZiExyVxHO_4tk4tZy7zgFbJlGiD_xq8BOc_RK0s2s9mGYG8"/>
+<span class="absolute top-3 left-3 bg-primary text-on-primary font-label-sm uppercase px-2.5 py-1 rounded-full shadow-sm">
+              Chef's Choice
+            </span>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+<div class="space-y-2">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Smoky Chipotle Beef</h3>
+<span class="font-headline-sm text-primary font-bold">$18.90</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3 leading-relaxed">
+                Slow-braised smoky beef, seasoned brown rice, black turtle beans, fire-roasted corn salsa and zesty house chipotle crema.
+              </p>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-outline">640 kcal</span>
+<a class="inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-md transition-colors shadow-sm" data-path="menu" href="#">
+<span>Order now</span>
+<span class="material-symbols-outlined text-[16px]">add</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+<div class="relative h-56 bg-surface-container-low overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Crispy glazed teriyaki tofu bowl with steamed jasmine rice, vibrant edamame beans, broccoli florets, and toasted sesame seeds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrfLt9MKAgT-BX63tEG4xiMrIW1S4QdfFrLKaZdl8XHxlh5AN-2RbOBQAbt6-CSKWGxA5t45JYnE09U1KEUqubmFy8aMg55od3Bx-4Sb9JLVIQvNV3PISy6ACUJrMl_Xb8VU3mS2Rpkj-_T2RPzthhLARsZ9M3P3GRGXHc-lRk5DYK0cwNhMzNG1LY-evv5PNDnZJYDrEZlx-5CzQjPfdHUQ1pl6DDSKsZfD5TZYwp"/>
+<span class="absolute top-3 left-3 bg-primary-fixed text-on-primary-fixed font-label-sm uppercase px-2.5 py-1 rounded-full shadow-sm">
+              Plant-based
+            </span>
+</div>
+<div class="p-space-md flex flex-col flex-1 justify-between gap-space-md">
+<div class="space-y-2">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Crispy Teriyaki Tofu</h3>
+<span class="font-headline-sm text-primary font-bold">$16.90</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3 leading-relaxed">
+                Crispy glazed artisanal teriyaki tofu, jasmine rice, wok-tossed seasonal greens, tender edamame and fragrant toasted sesame.
+              </p>
+</div>
+<div class="pt-2 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-outline">490 kcal</span>
+<a class="inline-flex items-center gap-1 px-space-md py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md transition-colors" data-path="menu" href="#">
+<span>Customise</span>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile View All CTA -->
+<div class="mt-8 text-center md:hidden">
+<a class="inline-flex items-center gap-2 px-space-lg py-3 rounded-lg bg-surface-container text-primary font-label-lg w-full justify-center" data-path="menu" href="#">
+<span>Explore All 24 Dishes</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- CUSTOMISATION PROCESS: "MADE YOUR WAY" -->
+<section class="w-full py-16 lg:py-20 bg-surface-container-low">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+<span class="font-label-md uppercase tracking-widest text-secondary font-bold">Everyday Artisanal Kitchen</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Craft Your Meal in 3 Steps</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          Whether counting macros or pursuing fiery taste discoveries, build your personalised bowl exactly how you want it.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg relative">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="space-y-4">
+<span class="font-display-lg text-display-lg text-secondary/30 font-bold">01</span>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Choose Your Base</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Warm seasoned sushi rice, nutrient-dense ancient grains & quinoa blend, or crisp organic baby leaf greens.
+            </p>
+</div>
+<div class="pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Sushi Rice</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Ancient Grains</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Leafy Greens</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="space-y-4">
+<span class="font-display-lg text-display-lg text-secondary/30 font-bold">02</span>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Pick Flame-Grilled Protein</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Charred Korean BBQ chicken, slow-cooked smoky pulled beef, garlic herb chicken, or golden handcrafted falafel.
+            </p>
+</div>
+<div class="pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">BBQ Chicken</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Smoky Beef</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Crisp Falafel</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="space-y-4">
+<span class="font-display-lg text-display-lg text-secondary/30 font-bold">03</span>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Crown With Slaw & Drizzle</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              House-pickled red onions, fire-roasted corn salsa, sliced avocado, toasted seeds, and scratch vinaigrettes.
+            </p>
+</div>
+<div class="pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">House Slaw</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Corn Salsa</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm">Chipotle Crema</span>
+</div>
+</div>
+</div>
+<!-- Quick Customise CTA -->
+<div class="mt-12 text-center">
+<a class="inline-flex items-center gap-space-sm px-space-xl py-3.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg shadow-md transition-all" data-path="menu" href="#">
+<span class="material-symbols-outlined text-[20px]">soup_kitchen</span>
+<span>Start Building Your Bowl</span>
+</a>
+</div>
+</div>
+</section>
+<!-- STORY SNAPSHOT SECTION -->
+<section class="w-full py-16 lg:py-24 bg-surface">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+<!-- Story Image Composition -->
+<div class="lg:col-span-6 relative">
+<div class="rounded-2xl overflow-hidden shadow-lg bg-surface-container-high h-[440px]">
+<img class="w-full h-full object-cover" data-alt="Modern upscale Australian kitchen pass with chefs plating fresh colourful bowls with flame-charred ingredients and herbs in warm morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Yu9IjmTouq8TuewcCeXqTlLjiZ9y2TOLF-hZSCrjJCH3sgz4uLIWEylbnW_E4sE6SEtKFdO3YqzthZ4YTTFMcnbp1SYsfHleCLXX2rFiPptYFxN8J3CD43LgJTNEASNLRVHYSeSdk8hnXYKA6Uyt5GdJOG50h2oIeLup2SpClkYRj7tcq_CGdTOSDwWgVh-dOKCKagP2f8hFJCxSrA3Eivpp7XgFw36VbjUVO4T3"/>
+</div>
+<!-- Floating Melb Quote Tag -->
+<div class="absolute -bottom-6 sm:-bottom-8 right-4 sm:right-8 bg-surface-container-lowest p-6 rounded-xl shadow-xl max-w-xs border-l-4 border-secondary">
+<p class="font-headline-sm text-headline-sm text-primary italic leading-snug">
+              “Good food shouldn't compromise on speed, origin, or soul.”
+            </p>
+<span class="block mt-2 font-label-sm text-on-surface-variant font-bold uppercase tracking-wider">— Melbourne, Est. 2016</span>
+</div>
+</div>
+<!-- Story Copy -->
+<div class="lg:col-span-6 flex flex-col justify-center space-y-6 pt-8 lg:pt-0">
+<div class="space-y-3">
+<span class="font-label-md uppercase tracking-widest text-secondary font-bold">Many Flavours. One Gourwest.</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Born in Melbourne.<br class="hidden sm:inline"/> Shared with the World.</h2>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            Founded in Melbourne in 2016, Gourwest started with an ambition: unite vibrant international street flavours with wholesome, fresh Australian produce.
+          </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            From our early morning prep kitchens hand-cutting crisp Lebanese cucumbers and roasting sweet corn, to our bespoke open grills that seal in smoky marinades—we honour recipes that travel across borders while remaining grounded in everyday community dining.
+          </p>
+<div class="grid grid-cols-3 gap-4 pt-4 border-t border-surface-variant">
+<div>
+<div class="font-display-lg text-display-lg text-primary font-bold">48</div>
+<div class="font-label-md text-on-surface-variant uppercase">Kitchens</div>
+</div>
+<div>
+<div class="font-display-lg text-display-lg text-primary font-bold">100%</div>
+<div class="font-label-md text-on-surface-variant uppercase">Local Produce</div>
+</div>
+<div>
+<div class="font-display-lg text-display-lg text-primary font-bold">8 Yr</div>
+<div class="font-label-md text-on-surface-variant uppercase">Culinary Heritage</div>
+</div>
+</div>
+<div class="pt-2">
+<a class="inline-flex items-center gap-space-xs font-label-lg text-primary hover:text-secondary transition-colors" data-path="our-story" href="#">
+<span>Read our full culinary origin</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- DUAL FEATURE BANNERS: REWARDS & CATERING -->
+<section class="w-full py-12 lg:py-16 bg-surface-container-low">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- Rewards Card -->
+<div class="bg-primary-container text-on-primary rounded-2xl p-8 lg:p-10 shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="space-y-4 relative z-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm uppercase font-bold">
+<span class="material-symbols-outlined text-[16px]">stars</span>
+<span>Gourwest Club</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-primary">Good taste deserves good rewards.</h3>
+<p class="font-body-md text-body-md text-on-primary-container leading-relaxed max-w-md">
+              Earn 10 points for every dollar spent in store or online. Unlock complimentary sides, birthday treats, and secret seasonal menu tastings.
+            </p>
+</div>
+<div class="pt-8 relative z-10">
+<a class="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-secondary-container text-on-secondary-container font-label-lg hover:bg-secondary-fixed-dim transition-colors shadow-sm" data-path="rewards" href="#">
+<span>Join Rewards — It's Free</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Catering Card -->
+<div class="bg-surface-container-lowest text-on-surface rounded-2xl p-8 lg:p-10 shadow-md flex flex-col justify-between relative overflow-hidden">
+<div class="space-y-4 relative z-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm uppercase font-bold">
+<span class="material-symbols-outlined text-[16px]">room_service</span>
+<span>Events & Offices</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary">Bring the world to your table.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-md">
+              Elevate team lunches, corporate presentations, and festive gatherings with our large-format platter boxes, build-your-own bowl bars, and tailored wraps.
+            </p>
+</div>
+<div class="pt-8 relative z-10">
+<a class="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-surface-container-high hover:bg-surface-dim text-primary font-label-lg transition-colors" data-path="catering" href="#">
+<span>Explore Catering Options</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RESTAURANT FINDER PREVIEW -->
+<section class="w-full py-16 lg:py-20 bg-surface">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+<div>
+<span class="font-label-md uppercase tracking-widest text-secondary font-bold">Find a Kitchen Near You</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Our Flagship Locations</h2>
+</div>
+<a class="inline-flex items-center gap-1 font-label-lg text-primary hover:text-secondary transition-colors mt-2 md:mt-0" data-path="locations" href="#">
+<span>See all 48 locations</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- Location Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md">
+<!-- Melbourne Central -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="space-y-2">
+<div class="flex items-center justify-between text-secondary font-label-sm uppercase">
+<span>Melbourne, AU</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Melbourne Central</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Level 1, Food Hall, Swanston St</p>
+</div>
+<div class="pt-4 border-t border-surface-variant mt-4 space-y-1">
+<div class="font-label-sm text-on-surface-variant">Hours: 10:30am – 9:30pm</div>
+<div class="font-label-sm text-primary font-semibold">Prep time: ~15 mins</div>
+</div>
+</div>
+<!-- Southbank -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="space-y-2">
+<div class="flex items-center justify-between text-secondary font-label-sm uppercase">
+<span>Melbourne, AU</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Southbank Promenade</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Shop 4, Riverside Quay</p>
+</div>
+<div class="pt-4 border-t border-surface-variant mt-4 space-y-1">
+<div class="font-label-sm text-on-surface-variant">Hours: 11:00am – 10:00pm</div>
+<div class="font-label-sm text-primary font-semibold">Prep time: ~15 mins</div>
+</div>
+</div>
+<!-- Auckland City -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="space-y-2">
+<div class="flex items-center justify-between text-secondary font-label-sm uppercase">
+<span>Auckland, NZ</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Auckland Commercial Bay</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Level 2, Queen Street</p>
+</div>
+<div class="pt-4 border-t border-surface-variant mt-4 space-y-1">
+<div class="font-label-sm text-on-surface-variant">Hours: 10:30am – 9:00pm</div>
+<div class="font-label-sm text-primary font-semibold">Prep time: ~15 mins</div>
+</div>
+</div>
+<!-- Singapore Orchard -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="space-y-2">
+<div class="flex items-center justify-between text-secondary font-label-sm uppercase">
+<span>Singapore, SG</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Orchard Gateway</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">#B1-08 Orchard Road</p>
+</div>
+<div class="pt-4 border-t border-surface-variant mt-4 space-y-1">
+<div class="font-label-sm text-on-surface-variant">Hours: 11:00am – 10:00pm</div>
+<div class="font-label-sm text-primary font-semibold">Prep time: ~15 mins</div>
+</div>
+</div>
+<!-- Kuala Lumpur KLCC -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="space-y-2">
+<div class="flex items-center justify-between text-secondary font-label-sm uppercase">
+<span>Kuala Lumpur, MY</span>
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Suria KLCC</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Concourse Level, Tower 2</p>
+</div>
+<div class="pt-4 border-t border-surface-variant mt-4 space-y-1">
+<div class="font-label-sm text-on-surface-variant">Hours: 10:00am – 10:00pm</div>
+<div class="font-label-sm text-primary font-semibold">Prep time: ~15 mins</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- NEWSLETTER SIGNUP SECTION -->
+<section class="w-full py-16 bg-surface-container">
+<div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin">
+<div class="max-w-2xl mx-auto text-center space-y-6">
+<div class="w-12 h-12 rounded-full bg-surface-container-high mx-auto flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">mark_email_read</span>
+</div>
+<div class="space-y-2">
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Stay in the loop</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            Get early access to seasonal specials, culinary origin notes, and exclusive member perks delivered straight to your inbox.
+          </p>
+</div>
+<form class="space-y-4" id="newsletter-form" onsubmit="event.preventDefault(); document.getElementById('newsletter-success').classList.remove('hidden'); document.getElementById('newsletter-inputs').classList.add('hidden');">
+<div class="flex flex-col gap-3" id="newsletter-inputs">
+<div class="flex flex-col sm:flex-row gap-2">
+<input class="flex-1 px-4 py-3 rounded-lg bg-surface-container-lowest font-body-md text-on-surface placeholder:text-outline focus:outline-none shadow-sm" placeholder="Enter your email address" required="" type="email"/>
+<button class="px-space-xl py-3 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-lg shadow-sm transition-colors shrink-0" type="submit">
+                Subscribe
+              </button>
+</div>
+<!-- Consent Checkbox -->
+<label class="flex items-start gap-2 text-left cursor-pointer pt-1">
+<input class="mt-1 rounded text-primary focus:ring-0" required="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+                I consent to receiving email marketing and seasonal offers from Gourwest. You can unsubscribe anytime.
+              </span>
+</label>
+</div>
+<!-- Success Alert Message -->
+<div class="hidden p-4 rounded-xl bg-primary-fixed text-on-primary-fixed text-center font-label-lg shadow-sm" id="newsletter-success">
+            🎉 Thank you for subscribing! Your $5 welcome gift voucher is on its way.
+          </div>
+</form>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface mt-space-xl"><div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-space-lg pb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><img alt="Gourwest logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDwphynppR0fZFqa1lttJRpc5ASogx_cJ97QAHDA0DSARbrYhsTuvbT7rO7mAiBtmjsQhtPzYRS8kPsutG9hTUKc8ucODviTCMQErqwnL3NU1dG8eGwRL1h81zLEctqIAvh6CXZKhqdxv6-eXlk2yCmbn1M19e8VciAij8Mf1FS1LGPtp-NYsQIsNY-r_LMYfQC1fql-SuALyiino6IUxAqDF7w2lTruDq-1ogk4_EtHnzrJsrdkqew4TE"/><span class="font-headline-sm text-primary tracking-tight font-bold">GOURWEST</span></div><p class="font-body-md text-on-surface-variant max-w-sm leading-relaxed">Fresh bowls, bold wraps and flame-grilled favourites—inspired by global kitchens, crafted for your everyday dining. Founded in Melbourne in 2016.</p><div class="flex items-center gap-space-sm pt-space-xs"><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">public</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">chat_bubble</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">photo_camera</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">mail</span></span></div></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Menu</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Signature Bowls</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Wraps</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">From the Grill</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Sides & Drinks</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Locations</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Melbourne Central</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Southbank</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Auckland City</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Singapore Orchard</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">KLCC</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Gourwest</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Our Story</a></li><li><a class="hover:text-primary transition-colors" data-path="rewards" href="#">Rewards Club</a></li><li><a class="hover:text-primary transition-colors" data-path="catering" href="#">Catering & Events</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Careers</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Help & Legal</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Contact Team</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Allergen Guide</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Privacy Policy</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Terms of Service</a></li></ul></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm"><div class="flex flex-col sm:flex-row items-center gap-space-sm"><div class="flex items-center gap-1 font-label-md text-on-surface bg-surface-container px-space-sm py-1 rounded-lg"><span>🇦🇺</span><span>Australia (AUD)</span></div><p class="text-center sm:text-left">Gourwest is a fictional demonstration restaurant brand. All prices shown in AUD for Australian locations.</p></div><p class="shrink-0">© 2025 Gourwest Pty Ltd. All rights reserved.</p></div></div></footer></body></html>

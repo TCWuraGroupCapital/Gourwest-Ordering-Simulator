@@ -1,0 +1,167 @@
+---
+import { STORES } from '../data/stores';
+
+// One pin per city: kitchens in the same city sit a few hundred metres apart and would overlap.
+const cities = [...new Map(STORES.map((s) => [s.city, s])).values()];
+const count = (city: string) => STORES.filter((s) => s.city === city).length;
+// Kuala Lumpur and Singapore are close at globe scale, so their labels face opposite ways.
+const LEFT = new Set(['Kuala Lumpur']);
+---
+
+<div class="globe" data-globe>
+  <img class="globe__fallback" src="/brand/gourwest-mark.webp" width="256" height="256" alt="" />
+  {
+    cities.map((s) => (
+      <button
+        class="globe__pin"
+        type="button"
+        data-globe-pin={s.city}
+        data-side={LEFT.has(s.city) ? 'left' : 'right'}
+        data-hidden="true"
+        tabindex="-1"
+        aria-label={`Pick up in ${s.city}`}
+      >
+        <span class="globe__pin-name">{s.city}</span>
+        <span class="globe__pin-city">{count(s.city) > 1 ? `${count(s.city)} kitchens` : s.name}</span>
+      </button>
+    ))
+  }
+  <p class="globe__hint small" aria-hidden="true">Drag to spin · tap a city to pick up there</p>
+</div>
+
+<script>
+  import { STORES } from '../data/stores';
+  import { EVENT, getStore, setStore } from '../scripts/state';
+
+  const host = document.querySelector<HTMLElement>('[data-globe]');
+  const cities = [...new Map(STORES.map((s) => [s.city, { id: s.city, lat: s.lat, lon: s.lon }])).values()];
+
+  // Choosing a city keeps your current kitchen if it is already there, otherwise picks that city's first kitchen.
+  const selectCity = (city: string) => {
+    if (getStore().city === city) return;
+    const store = STORES.find((s) => s.city === city);
+    if (store) setStore(store.id);
+  };
+
+  if (host) {
+    const load = async () => {
+      const { mountGlobe } = await import('../scripts/globe');
+      const globe = mountGlobe(host, cities, { initialPinId: getStore().city, onSelect: selectCity });
+      if (!globe) return;
+      const sync = () => {
+        const city = getStore().city;
+        globe.focus(city);
+        host.querySelectorAll<HTMLElement>('[data-globe-pin]').forEach((pin) => pin.setAttribute('aria-pressed', String(pin.dataset.globePin === city)));
+      };
+      window.addEventListener(EVENT, sync);
+      sync();
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback;
+      if (idle) idle(() => load().catch(console.error), { timeout: 1200 });
+      else setTimeout(() => load().catch(console.error), 200);
+    });
+    io.observe(host);
+  }
+</script>
+
+<style>
+  .globe {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 38rem;
+    margin-inline: auto;
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+  }
+  .globe[data-dragging] {
+    cursor: grabbing;
+  }
+  .globe :global(.globe__canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .globe__fallback {
+    position: absolute;
+    inset: 12%;
+    width: 76%;
+    height: 76%;
+    object-fit: contain;
+    pointer-events: none;
+    transition: opacity var(--t-ui) var(--ease-out);
+  }
+  .globe[data-ready] .globe__fallback {
+    opacity: 0;
+  }
+  .globe__pin {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    min-height: 44px;
+    margin: 0;
+    padding: 0.35rem 0.7rem;
+    align-content: center;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-1);
+    background: color-mix(in oklch, var(--surface) 92%, transparent);
+    color: var(--fg);
+    text-align: left;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: var(--shadow-1);
+    translate: 14px -50%;
+    transition: opacity var(--t-ui) var(--ease-out), background-color var(--t-micro) var(--ease-out);
+  }
+  .globe__pin[data-side='left'] {
+    translate: calc(-100% - 14px) -50%;
+  }
+  .globe[data-ready] .globe__pin {
+    display: grid;
+  }
+  .globe__pin[data-hidden='true'] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .globe__pin:hover {
+    border-color: var(--forest);
+  }
+  .globe__pin:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 2px;
+  }
+  .globe__pin[aria-pressed='true'] {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--on-forest);
+  }
+  .globe__pin-name {
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .globe__pin-city {
+    font-size: 0.8125rem;
+    opacity: 0.85;
+  }
+  .globe__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 1%;
+    translate: -50% 0;
+    margin: 0;
+    color: var(--fg-2);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--t-enter) var(--ease-out);
+  }
+  .globe[data-ready] .globe__hint {
+    opacity: 1;
+  }
+</style>

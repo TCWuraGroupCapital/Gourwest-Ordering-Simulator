@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Prose from '../components/Prose.astro';
+---
+
+<Base title="Terms of use" description="Terms for using the Gourwest ordering simulator.">
+  <PageIntro label="Legal" title="Terms of use" lead="Last updated 18 November 2026." />
+  <Prose>
+    <h2>A demonstration, not a restaurant</h2>
+    <p>
+      Gourwest is fictional. Menu items, prices, nutrition figures, locations and opening hours are synthetic demo data. Orders placed here are not
+      cooked or delivered, and no payment is taken.
+    </p>
+
+    <h2>Orders</h2>
+    <p>
+      Placing an order sends one record to Luminara CRM for demonstration. Each checkout is sent once; if the site reports that the kitchen system was slow
+      to respond, the order may still have been recorded, so check before placing it again.
+    </p>
+
+    <h2>Allergens and nutrition</h2>
+    <p>Allergen and nutrition information is illustrative. Do not rely on it for medical or dietary decisions.</p>
+
+    <h2>Menu concierge</h2>
+    <p>The concierge suggests dishes from the menu. Suggestions may be imperfect; always check the dish page and the allergen guide.</p>
+
+    <h2>Acceptable use</h2>
+    <p>Don’t submit real personal or payment information, attempt to disrupt the service, or send automated traffic. We may block requests that do.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about these terms? Use the <a href="/contact/">contact form</a>.</p>
+  </Prose>
+</Base>

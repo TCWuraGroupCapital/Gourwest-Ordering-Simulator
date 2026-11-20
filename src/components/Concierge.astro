@@ -1,0 +1,347 @@
+---
+import Icon from './Icon.astro';
+
+const prompts = ['Surprise me', 'Complete my meal', 'High protein under $20', 'Plant-based and filling', 'Something with a chilli kick', 'Lunch for 12 at the office'];
+---
+
+<button class="concierge-fab" type="button" popovertarget="concierge" aria-label="Ask the menu concierge" title="Ask the menu concierge">
+  <Icon name="sparkles" size={22} />
+</button>
+
+<section id="concierge" popover class="concierge" aria-labelledby="concierge-title">
+  <header class="concierge__head">
+    <div>
+      <h2 id="concierge-title">Menu concierge</h2>
+      <p class="small muted">Tell me what you feel like — diet, budget, heat, hunger.</p>
+    </div>
+    <button class="icon-btn" type="button" popovertarget="concierge" popovertargetaction="hide" aria-label="Close concierge">
+      <Icon name="x" />
+    </button>
+  </header>
+
+  <ol class="concierge__log" role="log" aria-live="polite" aria-relevant="additions" data-log>
+    <li class="msg msg--bot">
+      <p>Hi! I know every dish, price and allergen on the menu. What are you in the mood for?</p>
+    </li>
+  </ol>
+
+  <div class="concierge__prompts" data-prompts>
+    {prompts.map((p) => <button class="chip" type="button" data-prompt={p}>{p}</button>)}
+  </div>
+
+  <form class="concierge__form" data-form>
+    <label class="visually-hidden" for="concierge-input">Message the concierge</label>
+    <input id="concierge-input" class="input" name="message" maxlength="600" autocomplete="off" placeholder="e.g. vegan and filling, under $18" required />
+    <button class="btn" type="submit" aria-label="Send">
+      <Icon name="send" size={18} />
+    </button>
+  </form>
+  <p class="concierge__fine small muted" data-source>Suggestions only — always check the allergen guide.</p>
+
+  <template data-card-template>
+    <li class="pick">
+      <img class="pick__img" width="96" height="72" alt="" loading="lazy" decoding="async" />
+      <div class="pick__body">
+        <a class="pick__name"></a>
+        <span class="pick__meta small muted num"></span>
+      </div>
+      <button class="btn btn--quiet pick__add" type="button"></button>
+    </li>
+  </template>
+</section>
+
+<script>
+  import { findItem, type MenuItem } from '../data/menu';
+  import { defaultChoices, formatAUD } from '../lib/pricing';
+  import { addToCart, getCart, getStore } from '../scripts/state';
+  import { toast } from '../scripts/toast';
+
+  type Turn = { role: 'user' | 'assistant'; content: string };
+  const panel = document.getElementById('concierge')!;
+  const log = panel.querySelector<HTMLOListElement>('[data-log]')!;
+  const form = panel.querySelector<HTMLFormElement>('[data-form]')!;
+  const input = form.querySelector<HTMLInputElement>('input')!;
+  const sendBtn = form.querySelector<HTMLButtonElement>('button')!;
+  const tpl = panel.querySelector<HTMLTemplateElement>('[data-card-template]')!;
+  const source = panel.querySelector<HTMLElement>('[data-source]')!;
+  const history: Turn[] = [];
+
+  function bubble(role: 'user' | 'bot', text: string): HTMLLIElement {
+    const li = document.createElement('li');
+    li.className = `msg msg--${role}`;
+    const p = document.createElement('p');
+    p.textContent = text;
+    li.append(p);
+    log.append(li);
+    log.scrollTop = log.scrollHeight;
+    return li;
+  }
+
+  const addDish = (item: MenuItem) => addToCart({ slug: item.slug, qty: 1, choices: defaultChoices(item) });
+
+  function cards(slugs: string[]): HTMLElement[] {
+    const items = [...new Set(slugs)].map(findItem).filter((i) => i !== undefined);
+    if (!items.length) return [];
+    const list = document.createElement('ol');
+    list.className = 'picks';
+    for (const item of items) {
+      const node = tpl.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+      const img = node.querySelector('img')!;
+      if (item.photo) img.src = `/images/food/${item.photo.src}-640.webp`;
+      else img.remove();
+      const link = node.querySelector<HTMLAnchorElement>('.pick__name')!;
+      link.href = `/menu/${item.slug}/`;
+      link.textContent = item.name;
+      node.querySelector('.pick__meta')!.textContent = `${formatAUD(item.price)} · ${item.kcal} kcal`;
+      const add = node.querySelector<HTMLButtonElement>('.pick__add')!;
+      // One tap adds the chef's build; the dish name links to the customiser.
+      add.textContent = 'Add';
+      add.setAttribute('aria-label', `Add ${item.name} to bag`);
+      add.addEventListener('click', () => {
+        addDish(item);
+        toast(`${item.name} added to your bag`);
+      });
+      list.append(node);
+    }
+    if (items.length < 2) return [list];
+    // The whole suggestion in one tap: a meal, not three decisions.
+    const all = document.createElement('button');
+    all.type = 'button';
+    all.className = 'btn picks__all';
+    all.textContent = `Add all ${items.length} · ${formatAUD(items.reduce((sum, i) => sum + i.price, 0))}`;
+    all.addEventListener('click', () => {
+      items.forEach(addDish);
+      // One tap, one meal: a second tap would silently double the bag.
+      all.disabled = true;
+      all.textContent = 'Added to your bag';
+      toast(`${items.length} dishes added to your bag`);
+    });
+    return [list, all];
+  }
+
+  async function ask(text: string) {
+    const message = text.trim().slice(0, 600);
+    if (!message || sendBtn.disabled) return;
+    bubble('user', message);
+    history.push({ role: 'user', content: message });
+    input.value = '';
+    sendBtn.disabled = true;
+    const pending = bubble('bot', 'Thinking about the menu…');
+    pending.classList.add('msg--pending');
+    pending.setAttribute('aria-busy', 'true');
+
+    try {
+      const res = await fetch('/api/concierge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history.slice(-10), storeId: getStore().id, bag: getCart().map((line) => line.slug) }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.reply) throw new Error(data?.error?.message ?? 'The concierge is unavailable.');
+      pending.remove();
+      const li = bubble('bot', data.reply);
+      li.append(...cards(data.items ?? []));
+      history.push({ role: 'assistant', content: data.reply });
+      source.textContent = data.source === 'ai' ? 'AI suggestions from our live menu. Always check the allergen guide.' : 'Answered by our house recommender. Always check the allergen guide.';
+    } catch (error) {
+      pending.remove();
+      history.pop();
+      bubble('bot', error instanceof Error && error.message ? error.message : 'Something went wrong. Please try again.').classList.add('msg--error');
+    } finally {
+      sendBtn.disabled = false;
+      log.scrollTop = log.scrollHeight;
+    }
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    ask(input.value);
+  });
+  panel.querySelectorAll<HTMLButtonElement>('[data-prompt]').forEach((btn) => btn.addEventListener('click', () => ask(btn.dataset.prompt!)));
+  panel.addEventListener('toggle', (event) => {
+    if ((event as ToggleEvent).newState === 'open') input.focus();
+  });
+  document.querySelectorAll<HTMLElement>('[data-open-concierge]').forEach((el) =>
+    el.addEventListener('click', () => {
+      panel.showPopover();
+      const prompt = el.dataset.openConcierge;
+      if (prompt) ask(prompt);
+    }),
+  );
+</script>
+
+<style>
+  .concierge-fab {
+    position: fixed;
+    right: var(--s-4);
+    bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+    z-index: 60;
+    /* A 52px circle at every width: a wide pill covered prices and copy at the right edge. */
+    display: inline-grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 1px solid color-mix(in oklch, var(--gold-bright) 60%, transparent);
+    border-radius: var(--r-pill);
+    background: var(--forest-deep);
+    color: var(--on-forest);
+    font-weight: 700;
+    font-size: var(--step--1);
+    box-shadow: var(--shadow-3);
+    cursor: pointer;
+    transition: transform var(--t-micro) var(--ease-out);
+  }
+  .concierge-fab svg {
+    color: var(--gold-bright);
+  }
+  .concierge-fab:hover {
+    transform: translateY(-2px);
+  }
+  .concierge-fab:active {
+    transform: scale(0.97);
+  }
+
+  .concierge {
+    inset: auto var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom)) auto;
+    width: min(26rem, calc(100vw - 2rem));
+    height: min(40rem, calc(100dvh - 2rem));
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    transform-origin: bottom right;
+    transition: opacity var(--t-ui) var(--ease-in), transform var(--t-ui) var(--ease-in), overlay var(--t-ui) allow-discrete, display var(--t-ui) allow-discrete;
+  }
+  .concierge:popover-open {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto auto;
+    opacity: 1;
+    transform: none;
+    transition-timing-function: var(--ease-out);
+  }
+  @starting-style {
+    .concierge:popover-open {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+  }
+  .concierge__head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-4) var(--s-4) var(--s-3) var(--s-5);
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .concierge__head h2 {
+    font-size: var(--step-1);
+  }
+  .concierge__log {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    margin: 0;
+    padding: var(--s-4);
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .concierge__log :global(.msg) {
+    max-width: 92%;
+    padding: var(--s-3) var(--s-4);
+    border-radius: 14px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .concierge__log :global(.msg--bot) {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+  .concierge__log :global(.msg--user) {
+    justify-self: end;
+    background: var(--forest);
+    color: var(--on-forest);
+    border-bottom-right-radius: 4px;
+  }
+  .concierge__log :global(.msg--pending) {
+    color: var(--fg-2);
+    font-style: italic;
+  }
+  .concierge__log :global(.msg--error) {
+    border-color: color-mix(in oklch, var(--bad) 40%, transparent);
+  }
+  .concierge__log :global(.picks) {
+    display: grid;
+    gap: var(--s-2);
+    margin: var(--s-3) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .concierge__log :global(.pick) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+  }
+  .concierge__log :global(.pick__img) {
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .concierge__log :global(.pick__body) {
+    display: grid;
+    min-width: 0;
+  }
+  .concierge__log :global(.pick__name) {
+    font-weight: 700;
+    color: var(--forest-deep);
+    text-decoration: none;
+  }
+  .concierge__log :global(.pick__name:hover) {
+    text-decoration: underline;
+  }
+  .concierge__log :global(.picks__all) {
+    width: 100%;
+    margin-top: var(--s-2);
+  }
+  .concierge__log :global(.pick__add) {
+    min-height: 44px;
+    padding: 0.5rem 0.8rem;
+  }
+  .concierge__prompts {
+    display: flex;
+    gap: var(--s-2);
+    padding: 0 var(--s-4) var(--s-3);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .concierge__form {
+    display: flex;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .concierge__form .btn {
+    flex: none;
+    width: 48px;
+    padding: 0;
+  }
+  .concierge__fine {
+    padding: 0 var(--s-4) var(--s-3);
+    background: var(--surface);
+  }
+</style>

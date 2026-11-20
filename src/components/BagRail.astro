@@ -1,0 +1,240 @@
+---
+/**
+ * The bag beside the menu on wide screens (1100px and up): lines, quantities, subtotal and the pickup
+ * kitchen stay in view while you browse, so checking your order never means leaving the menu.
+ * Narrower screens use the menu's floating bag bar instead. Store name, prep time and totals are
+ * filled by the header's shared render via the data-store-* / data-cart-total hooks.
+ */
+import Icon from './Icon.astro';
+---
+
+<aside class="rail follows-header" aria-labelledby="rail-title" data-rail>
+  <div class="rail__head">
+    <h2 id="rail-title" class="rail__title">Your bag</h2>
+    <button class="rail__store small" type="button" popovertarget="store-picker" aria-label="Change pickup kitchen">
+      <Icon name="map-pin" size={16} />
+      <span><strong data-store-name>Melbourne Central</strong> · ready in about <span class="num" data-store-prep>15</span>&nbsp;min</span>
+    </button>
+  </div>
+
+  <p class="rail__empty small muted" tabindex="-1" data-rail-empty>
+    Nothing here yet. Tap <strong>Add</strong> for the chef’s build, or open a dish to make it your way.
+  </p>
+  <ul class="rail__lines" role="list" data-rail-lines></ul>
+
+  <div class="rail__foot" hidden data-rail-foot>
+    <div class="rail__sum">
+      <span>Subtotal</span>
+      <span class="num" data-cart-total>$0.00</span>
+    </div>
+    <p class="small muted num" data-rail-points></p>
+    <a class="btn btn--lg btn--block" href="/cart/">Checkout <Icon name="arrow-right" size={18} /></a>
+  </div>
+</aside>
+
+<template data-rail-line>
+  <li class="rail-line">
+    <div class="rail-line__text">
+      <p class="rail-line__name"></p>
+      <p class="rail-line__summary small muted"></p>
+    </div>
+    <span class="rail-line__price num"></span>
+    <div class="rail-line__qty" role="group">
+      <button class="icon-btn" type="button" data-step="-1"><Icon name="minus" size={14} /></button>
+      <span class="rail-line__count num"></span>
+      <button class="icon-btn" type="button" data-step="1"><Icon name="plus" size={14} /></button>
+    </div>
+  </li>
+</template>
+
+<script>
+  import { EVENT, getCart, setQty } from '../scripts/state';
+  import { MAX_QTY, POINTS_PER_DOLLAR, formatAUD } from '../lib/pricing';
+
+  const rail = document.querySelector<HTMLElement>('[data-rail]');
+  if (rail) {
+    const list = rail.querySelector<HTMLUListElement>('[data-rail-lines]')!;
+    const empty = rail.querySelector<HTMLElement>('[data-rail-empty]')!;
+    const foot = rail.querySelector<HTMLElement>('[data-rail-foot]')!;
+    const points = rail.querySelector<HTMLElement>('[data-rail-points]')!;
+    const template = document.querySelector<HTMLTemplateElement>('[data-rail-line]')!;
+
+    const render = () => {
+      // Re-rendering replaces the buttons, so remember which one had focus and put it back.
+      const focused = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>('[data-step]');
+      const refocus = focused && list.contains(focused) ? { index: focused.closest('li')!.dataset.index, step: focused.dataset.step } : null;
+
+      const lines = getCart();
+      list.replaceChildren(
+        ...lines.map((line, index) => {
+          const li = template.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+          li.dataset.index = String(index);
+          li.querySelector('.rail-line__name')!.textContent = line.name;
+          const summary = li.querySelector<HTMLElement>('.rail-line__summary')!;
+          summary.textContent = line.summary.join(' · ');
+          summary.hidden = line.summary.length === 0;
+          li.querySelector('.rail-line__price')!.textContent = formatAUD(line.total);
+          li.querySelector('.rail-line__count')!.textContent = String(line.qty);
+          li.querySelector('[role="group"]')!.setAttribute('aria-label', `${line.name} quantity: ${line.qty}`);
+          const [less, more] = li.querySelectorAll<HTMLButtonElement>('[data-step]');
+          less.setAttribute('aria-label', line.qty === 1 ? `Remove ${line.name}` : `One fewer ${line.name}`);
+          more.setAttribute('aria-label', `One more ${line.name}`);
+          more.disabled = line.qty >= MAX_QTY;
+          return li;
+        }),
+      );
+
+      const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
+      empty.hidden = lines.length > 0;
+      foot.hidden = lines.length === 0;
+      points.textContent = `Earns ${Math.floor((subtotal * POINTS_PER_DOLLAR) / 100).toLocaleString('en-AU')} Club points with your member number`;
+
+      if (refocus) {
+        const target =
+          list.querySelector<HTMLElement>(`li[data-index="${refocus.index}"] [data-step="${refocus.step}"]`) ??
+          rail.querySelector<HTMLElement>('[data-rail-empty]');
+        target?.focus();
+      }
+    };
+
+    list.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('[data-step]');
+      if (!button) return;
+      const index = Number(button.closest('li')!.dataset.index);
+      const line = getCart()[index];
+      if (line) setQty(index, line.qty + Number(button.dataset.step));
+    });
+
+    window.addEventListener(EVENT, render);
+    render();
+  }
+</script>
+
+<style>
+  .rail {
+    display: none;
+  }
+  @media (min-width: 1100px) {
+    .rail {
+      position: sticky;
+      top: 12.5rem;
+      display: grid;
+      gap: var(--s-4);
+      max-height: calc(100dvh - 14rem);
+      margin-top: var(--s-4);
+      padding: var(--s-5);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border: 1px solid var(--line);
+      border-radius: var(--r-2);
+      background: var(--surface);
+      box-shadow: var(--shadow-1);
+    }
+  }
+  .rail__head {
+    display: grid;
+    gap: var(--s-2);
+  }
+  .rail__title {
+    font-size: var(--step-2);
+  }
+  .rail__store {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-1);
+    background: var(--bg);
+    color: var(--fg-2);
+    text-align: left;
+    cursor: pointer;
+  }
+  .rail__store:hover {
+    border-color: var(--line-strong);
+  }
+  .rail__store :global(svg) {
+    flex: none;
+    margin-top: 2px;
+    color: var(--gold);
+  }
+  .rail__store strong {
+    color: var(--fg);
+  }
+  .rail__empty {
+    padding: var(--s-4);
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--r-1);
+    text-wrap: pretty;
+  }
+  /* Holds focus when the last line is removed, so keyboard users aren't dropped to the top of the page. */
+  .rail__empty:focus {
+    outline: none;
+  }
+  .rail__lines {
+    display: grid;
+    margin: 0;
+    padding: 0;
+  }
+  .rail-line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-2) var(--s-3);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .rail-line:first-child {
+    padding-top: 0;
+  }
+  .rail-line__name {
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .rail-line__summary {
+    margin-top: 2px;
+  }
+  .rail-line__price {
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .rail-line__qty {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .rail-line__qty .icon-btn {
+    width: 36px;
+    height: 36px;
+    position: relative;
+  }
+  /* 36px to look at, 44px to hit. */
+  .rail-line__qty .icon-btn::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
+  .rail-line__qty .icon-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .rail-line__count {
+    min-width: 2ch;
+    text-align: center;
+    font-weight: 700;
+  }
+  .rail__foot {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .rail__foot[hidden] {
+    display: none;
+  }
+  .rail__sum {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: var(--step-1);
+  }
+</style>

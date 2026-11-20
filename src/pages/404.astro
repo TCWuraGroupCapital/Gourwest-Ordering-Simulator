@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title="Page not found" description="This page isn’t on the menu." noindex>
+  <section class="wrap nf">
+    <img src="/brand/gourwest-mark.webp" width="160" height="160" alt="" />
+    <p class="label">404</p>
+    <h1>This page isn’t on the menu</h1>
+    <p class="lead">The link may be old, or the dish may have moved. Try one of these instead.</p>
+    <div class="nf__actions">
+      <a class="btn btn--lg" href="/menu/">See the menu</a>
+      <a class="btn btn--lg btn--ghost" href="/">Back to home</a>
+      <button class="btn btn--lg btn--quiet" type="button" data-open-concierge="">
+        <Icon name="sparkles" size={18} /> Ask the concierge
+      </button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: center;
+    padding-block: var(--s-8);
+    text-align: center;
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s-3);
+  }
+</style>

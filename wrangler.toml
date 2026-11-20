@@ -1,0 +1,20 @@
+# Cloudflare Pages project: static site in dist/ plus Pages Functions in functions/.
+# This file is the source of truth for the project's config. Runtime settings are set as encrypted
+# variables so they never live in git and are not overridden by this file:
+#   npx wrangler pages secret put CRM_BASE_URL             (public HTTPS origin of Luminara CRM)
+#   npx wrangler pages secret put GOURWEST_WEBHOOK_SECRET  (same value as the CRM's .env)
+#   npx wrangler pages secret put CRM_WEB_FORM_ID          (numeric Krayin web form id for enquiry leads)
+#   npx wrangler pages secret put GROQ_API_KEY             (optional: AI concierge)
+#   npx wrangler pages secret put NVIDIA_API_KEY           (optional: AI concierge fallback)
+# Local development reads the same names from .dev.vars (see .dev.vars.example).
+name = "gourwest"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Required: order replay store and outbox (KV namespace "gourwest-orders"). It stops a double-clicked checkout
+# being sent twice and parks orders while the CRM is unreachable, so /api/orders refuses to take orders
+# without it (503). `wrangler pages dev` simulates it locally.
+[[kv_namespaces]]
+binding = "ORDERS_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"  # npx wrangler kv namespace create gourwest-orders

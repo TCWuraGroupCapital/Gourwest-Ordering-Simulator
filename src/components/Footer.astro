@@ -1,0 +1,140 @@
+---
+import { STORES } from '../data/stores';
+
+const year = new Date().getFullYear();
+const columns = [
+  {
+    title: 'Menu',
+    links: [
+      { href: '/menu/#bowls', label: 'Signature bowls' },
+      { href: '/menu/#wraps', label: 'Wraps' },
+      { href: '/menu/#grill', label: 'From the grill' },
+      { href: '/menu/#sides', label: 'Sides & drinks' },
+      { href: '/allergens/', label: 'Allergen guide' },
+    ],
+  },
+  {
+    title: 'Kitchens',
+    links: STORES.map((s) => ({ href: `/locations/#${s.id}`, label: `${s.name}, ${s.city}` })),
+  },
+  {
+    title: 'Gourwest',
+    links: [
+      { href: '/our-story/', label: 'Our story' },
+      { href: '/rewards/', label: 'Gourwest Club' },
+      { href: '/catering/', label: 'Catering & events' },
+      { href: '/contact/', label: 'Contact us' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { href: '/privacy/', label: 'Privacy policy' },
+      { href: '/terms/', label: 'Terms of use' },
+    ],
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="grid">
+      <div class="intro">
+        <img src="/brand/gourwest-logo.webp" width="220" height="188" alt="Gourwest — Flavours united. Worldwide." loading="lazy" />
+        <p class="muted">Fresh bowls, bold wraps and flame-grilled plates, inspired by global kitchens. Born in Melbourne in 2016.</p>
+      </div>
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <h2>{col.title}</h2>
+            <ul role="list">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+    <div class="base small">
+      <p class="demo"><strong>Demo simulator — synthetic data.</strong> Gourwest is a fictional brand used to demonstrate ordering into Luminara CRM. No real payments are taken.</p>
+      <p>© {year} Gourwest Pty Ltd (fictional). Prices in AUD.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section);
+    padding-block: var(--s-8) var(--s-6);
+    background: var(--surface-2);
+    border-top: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    gap: var(--s-6);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  }
+  .intro {
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+    grid-column: 1 / -1;
+    max-width: 26rem;
+  }
+  @media (min-width: 1000px) {
+    .grid {
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+    }
+    .intro {
+      grid-column: auto;
+    }
+  }
+  .intro img {
+    width: 180px;
+    height: auto;
+  }
+  h2 {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: var(--s-3);
+  }
+  ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--fg-2);
+    text-decoration: none;
+    font-size: var(--step--1);
+  }
+  ul a:hover {
+    color: var(--forest-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+    margin-top: var(--s-7);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line);
+    color: var(--fg-2);
+  }
+  .demo {
+    max-width: 44rem;
+  }
+</style>

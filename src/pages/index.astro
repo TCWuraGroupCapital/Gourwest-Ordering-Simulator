@@ -1,0 +1,514 @@
+---
+import Base from '../layouts/Base.astro';
+import DishCard from '../components/DishCard.astro';
+import FoodPhoto from '../components/FoodPhoto.astro';
+import Globe from '../components/Globe.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import { CATERING_FAQ, CLUB_FAQ, KITCHENS_FAQ, PICKUP_FAQ, PLANT_FAQ, restaurantNode } from '../lib/seo';
+import { MENU, findItem } from '../data/menu';
+import { STORES, formatHours } from '../data/stores';
+import { formatAUD } from '../lib/pricing';
+
+const signature = MENU.filter((item) => item.category === 'bowls');
+const seoul = findItem('seoul-bbq-chicken-bowl')!;
+const heroPhoto = { src: 'seoul-bbq-bowl-detail', width: 1200, height: 762, alt: 'Seoul BBQ chicken bowl: charred glazed chicken, sesame, slaw, pickled onion and cucumber over rice' };
+const site = Astro.site!;
+const countries = new Set(STORES.map((s) => s.country)).size;
+
+const schema = STORES.map((s) => restaurantNode(s, site));
+const faqs = [PICKUP_FAQ, PLANT_FAQ, KITCHENS_FAQ, CLUB_FAQ, CATERING_FAQ];
+---
+
+<Base
+  title="Gourwest"
+  description="Order fresh bowls, wraps and flame-grilled plates for pickup in about 15 minutes from Gourwest kitchens in Melbourne, Auckland, Singapore and Kuala Lumpur."
+  schema={schema}
+>
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="label">Order ahead · Pick up · Made your way</p>
+        <h1>Global flavours.<br /><span>Your local favourite.</span></h1>
+        <p class="lead measure">
+          Seoul BBQ bowls, falafel wraps and flame-grilled plates — built to your taste and ready for pickup in about 15 minutes.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--lg" href="/menu/">
+            Start your order
+            <Icon name="arrow-right" size={18} />
+          </a>
+          <button class="btn btn--lg btn--ghost" type="button" data-open-concierge="">
+            <Icon name="sparkles" size={18} />
+            Ask the concierge
+          </button>
+        </div>
+        <dl class="hero__facts">
+          <div>
+            <dt>Pickup</dt>
+            <dd class="num">~15 min</dd>
+          </div>
+          <div>
+            <dt>Kitchens</dt>
+            <dd class="num">{STORES.length} in {countries} countries</dd>
+          </div>
+          <div>
+            <dt>Club points</dt>
+            <dd class="num">10 per $1</dd>
+          </div>
+        </dl>
+      </div>
+      <figure class="hero__media">
+        <FoodPhoto photo={heroPhoto} eager sizes="(min-width: 960px) 46vw, 100vw" class="hero__img" />
+        <figcaption class="ticket">
+          <span class="tag tag--promo">{seoul.badge}</span>
+          <strong class="ticket__name">{seoul.name}</strong>
+          <span class="small muted num">{seoul.kcal}&nbsp;kcal · {seoul.proteinG}&nbsp;g protein</span>
+          <button class="btn" type="button" data-quick-add={seoul.slug} aria-label={`Add · ${formatAUD(seoul.price)}: the classic ${seoul.name}`}>
+            <Icon name="plus" size={16} />
+            <span class="num">Add · {formatAUD(seoul.price)}</span>
+          </button>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="signature-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="label">Signature bowls</p>
+          <h2 id="signature-title">Four bowls, four corners of the world</h2>
+          <p class="muted">Each one balanced for texture, heat and protein — and every ingredient is swappable.</p>
+        </div>
+        <a class="link-arrow" href="/menu/">See the full menu <Icon name="arrow-right" /></a>
+      </div>
+      <div class="dish-grid">
+        {signature.map((item) => <DishCard item={item} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-labelledby="build-title">
+    <div class="wrap build">
+      <div class="build__media reveal">
+        <FoodPhoto photo={findItem('seoul-bbq-chicken-bowl')!.photo!} sizes="(min-width: 960px) 560px, 100vw" class="build__img" />
+      </div>
+      <div class="build__copy reveal">
+        <p class="label">Made your way</p>
+        <h2 id="build-title">Build a bowl in three choices</h2>
+        <ol class="steps" role="list">
+          <li>
+            <h3>Choose the base</h3>
+            <p class="muted">Sushi rice, ancient grains and brown rice, crisp greens — or half and half.</p>
+          </li>
+          <li>
+            <h3>Pick the protein</h3>
+            <p class="muted">Korean BBQ chicken, chipotle beef, lemon herb chicken, teriyaki tofu or handmade falafel.</p>
+          </li>
+          <li>
+            <h3>Finish it</h3>
+            <p class="muted">Add avocado, kimchi or a jammy egg, choose a sauce and leave out anything you don't love.</p>
+          </li>
+        </ol>
+        <a class="btn btn--lg" href={`/menu/${seoul.slug}/`}>Customise the {seoul.name}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="story-title">
+    <div class="wrap story">
+      <div class="story__copy reveal">
+        <p class="label">Our story</p>
+        <h2 id="story-title">Born in Melbourne. Cooked for the world.</h2>
+        <p class="lead">
+          Gourwest started in 2016 with one open grill and a simple idea: bring the street food of Seoul, Beirut and Oaxaca together with
+          fresh Australian produce.
+        </p>
+        <p class="muted measure">
+          Every morning our kitchens hand-cut cucumbers, pickle onions and roast corn; every protein is marinated overnight and charred to order.
+        </p>
+        <a class="link-arrow" href="/our-story/">Read our story <Icon name="arrow-right" /></a>
+      </div>
+      <figure class="story__media reveal">
+        <img src="/images/food/kitchen-1200.webp" srcset="/images/food/kitchen-640.webp 640w, /images/food/kitchen-1200.webp 1200w" sizes="(min-width: 960px) 600px, 100vw" width="1408" height="768" alt="Gourwest chefs plating colourful bowls at the open kitchen pass" loading="lazy" decoding="async" />
+        <figcaption>
+          <p>“Good food shouldn’t compromise on speed, origin or soul.”</p>
+          <span class="small">Gourwest founding kitchen, Melbourne, 2016</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-label="Rewards and catering">
+    <div class="wrap duo">
+      <article class="duo__card duo__card--club reveal">
+        <Icon name="gift" size={28} />
+        <h2>Gourwest Club</h2>
+        <p>Earn 10 points for every dollar. Reach Silver at 750, Gold at 2,000 and Platinum at 5,000 for free sides, birthday treats and seasonal tastings.</p>
+        <a class="btn btn--gold" href="/rewards/">How the Club works</a>
+      </article>
+      <article class="duo__card reveal">
+        <Icon name="users" size={28} />
+        <h2>Catering for 8 to 500</h2>
+        <p class="muted">Platter boxes and build-your-own bowl bars for offices, launches and celebrations, delivered from your nearest kitchen.</p>
+        <a class="btn btn--ghost" href="/catering/">Plan a catering order</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="kitchens-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="label">Kitchens</p>
+          <h2 id="kitchens-title">Find your Gourwest</h2>
+        </div>
+        <a class="link-arrow" href="/locations/">Map and opening hours <Icon name="arrow-right" /></a>
+      </div>
+      <div class="kitchens">
+        <div class="kitchens__globe">
+          <Globe />
+        </div>
+        <ul class="kitchens__list" role="list">
+          {
+            STORES.map((s) => (
+              <li class="kitchen">
+                <div class="kitchen__info">
+                  <h3>
+                    {s.name} <span class="kitchen__city">{s.city}, {s.region}</span>
+                  </h3>
+                  <p class="small muted">{s.address}</p>
+                  <p class="small num kitchen__hours">
+                    <Icon name="clock" size={16} /> {formatHours(s)} · ready in about {s.prepMinutes}&nbsp;min
+                  </p>
+                </div>
+                <button class="btn btn--quiet" type="button" data-pick-store={s.id} aria-label={`Order from ${s.name}`}>
+                  Order from here
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+  <Faq faqs={faqs} tint />
+</Base>
+
+<style>
+  .hero {
+    padding-block: clamp(2rem, 5vw, 4.5rem) clamp(2.5rem, 6vw, 5rem);
+    background:
+      radial-gradient(60rem 30rem at 85% 40%, color-mix(in oklch, var(--gold-bright) 14%, transparent), transparent 70%),
+      var(--bg);
+    overflow: hidden;
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+    }
+  }
+  .hero__copy {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+  .hero h1 span {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+  .hero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4) var(--s-6);
+    margin: var(--s-2) 0 0;
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--line);
+  }
+  .hero__facts dt {
+    font-size: var(--step--1);
+    color: var(--fg-2);
+  }
+  .hero__facts dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--forest-deep);
+  }
+  /* Food leads: on phones the photo comes first so the dish is in the first frame. */
+  .hero__media {
+    position: relative;
+    min-width: 0;
+    margin: 0;
+  }
+  @media (max-width: 959px) {
+    .hero__media {
+      order: -1;
+    }
+  }
+  .hero__media :global(.hero__img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-2);
+  }
+  @media (min-width: 960px) {
+    .hero__media :global(.hero__img) {
+      aspect-ratio: 5 / 4;
+    }
+  }
+  /* The order ticket: the hero dish is one tap from the bag. */
+  .ticket {
+    position: absolute;
+    left: var(--s-4);
+    bottom: var(--s-4);
+    display: grid;
+    gap: var(--s-1);
+    justify-items: start;
+    max-width: min(20rem, calc(100% - 2 * var(--s-4)));
+    padding: var(--s-4);
+    border-radius: calc(var(--r-2) - 4px);
+    background: color-mix(in oklch, var(--surface) 94%, transparent);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-2);
+  }
+  .ticket__name {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.2;
+    color: var(--forest-deep);
+  }
+  .ticket .btn {
+    margin-top: var(--s-2);
+  }
+  @media (max-width: 520px) {
+    /* Phones: the ticket sits under the photo instead of covering the food. */
+    .ticket {
+      position: static;
+      max-width: none;
+      margin-top: calc(-1 * var(--s-6));
+      margin-inline: var(--s-3);
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--s-1) var(--s-3);
+    }
+    .ticket .tag {
+      display: none;
+    }
+    .ticket__name {
+      font-size: var(--step-0);
+    }
+    .ticket .btn {
+      grid-row: 1 / span 2;
+      grid-column: 2;
+      margin: 0;
+    }
+  }
+
+  .build {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .build {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--s-8);
+    }
+  }
+  .build__media :global(.build__img) {
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-2);
+  }
+  .build__copy {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+  .steps {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  .steps li {
+    position: relative;
+    padding-left: 3.25rem;
+    counter-increment: step;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  .steps h3 {
+    margin-bottom: var(--s-1);
+  }
+
+  .story {
+    display: grid;
+    gap: var(--s-7);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .story {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+  }
+  .story__copy {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+  }
+  .story__media {
+    position: relative;
+    margin: 0;
+  }
+  .story__media img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--r-2);
+  }
+  .story__media figcaption {
+    position: relative;
+    margin: calc(-1 * var(--s-7)) var(--s-4) 0 auto;
+    max-width: 22rem;
+    padding: var(--s-5);
+    border-radius: var(--r-2);
+    background: var(--surface);
+    border-left: 3px solid var(--gold-bright);
+    box-shadow: var(--shadow-2);
+  }
+  .story__media figcaption p {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    line-height: 1.35;
+    color: var(--forest-deep);
+    margin-bottom: var(--s-2);
+  }
+
+  .duo {
+    display: grid;
+    gap: var(--s-5);
+  }
+  @media (min-width: 840px) {
+    .duo {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .duo__card {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+    align-content: start;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border-radius: var(--r-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .duo__card > :global(svg) {
+    color: var(--gold);
+  }
+  .duo__card--club {
+    background: var(--forest-deep);
+    border-color: transparent;
+    color: var(--on-forest);
+  }
+  .duo__card--club h2 {
+    color: var(--on-forest);
+  }
+  .duo__card--club > :global(svg) {
+    color: var(--gold-bright);
+  }
+  .duo__card p {
+    max-width: 30rem;
+  }
+
+  /* The globe is the kitchens map: list on one side, spin-to-pick on the other. */
+  .kitchens {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .kitchens {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--s-8);
+    }
+  }
+  .kitchens__globe {
+    min-width: 0;
+    max-width: 32rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .kitchens__list {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .kitchen {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-5);
+    padding-block: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .kitchen__info {
+    display: grid;
+    gap: var(--s-1);
+    min-width: 0;
+    flex: 1 1 18rem;
+  }
+  .kitchen h3 {
+    font-size: var(--step-1);
+  }
+  .kitchen__city {
+    margin-left: var(--s-2);
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .kitchen__hours {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    color: var(--fg-2);
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+import '@fontsource-variable/playfair-display';
+import '@fontsource-variable/plus-jakarta-sans';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Concierge from '../components/Concierge.astro';
+import { breadcrumbNode, ldJson, siteNodes, type Node } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  /** Page entities; joined with WebSite, Organization and breadcrumbs into one @graph. */
+  schema?: Node[];
+}
+
+const { title, description, image = '/brand/og-image.jpg', noindex = false, schema = [] } = Astro.props;
+const fullTitle = title === 'Gourwest' ? 'Gourwest — Global flavours, made your way' : `${title} · Gourwest`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+const crumbs = noindex ? null : breadcrumbNode(Astro.site!, Astro.url.pathname, title);
+const graph = { '@context': 'https://schema.org', '@graph': [...siteNodes(Astro.site!), ...schema, ...(crumbs ? [crumbs] : [])] };
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#173E32" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Gourwest" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="en_AU" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        var t = localStorage.getItem('gourwest:theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    <script is:inline>
+      /* Card-to-dish photo morph. Only the card you opened (or came back from) carries the shared name, set here
+         in the head because pagereveal fires before deferred module scripts run. */
+      (function () {
+        var dish = /^\/menu\/([^/]+)\/$/;
+        function photo(url) {
+          try {
+            var m = new URL(url).pathname.match(dish);
+            return m && document.querySelector('[data-dish="' + CSS.escape(m[1]) + '"] .dish__media');
+          } catch (e) {
+            return null;
+          }
+        }
+        function name(el, t) {
+          if (!el || !t) return;
+          el.style.viewTransitionName = 'dish-hero';
+          function clear() {
+            el.style.viewTransitionName = '';
+          }
+          // A skipped transition rejects ready/finished; the page still navigates, so swallow it and clean up.
+          t.ready.catch(clear);
+          t.finished.then(clear, clear);
+        }
+        addEventListener('pageswap', function (e) {
+          if (e.activation && e.activation.entry) name(photo(e.activation.entry.url), e.viewTransition);
+        });
+        addEventListener('pagereveal', function (e) {
+          var from = window.navigation && navigation.activation && navigation.activation.from;
+          if (from) name(photo(from.url), e.viewTransition);
+        });
+      })();
+    </script>
+    {!noindex && <script type="application/ld+json" set:html={ldJson(graph)} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <Concierge />
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <script>
+      import '../scripts/reveal';
+      import '../scripts/quick-add';
+      import '../scripts/stores-ui';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  main:focus {
+    outline: none;
+  }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    z-index: 80;
+    /* max-content: a fixed box at left: 50% would otherwise shrink to half the viewport and wrap. */
+    width: max-content;
+    max-width: min(30rem, calc(100vw - 2rem));
+    padding: var(--s-3) var(--s-5);
+    border-radius: var(--r-pill);
+    background: var(--forest-deep);
+    color: var(--on-forest);
+    font-weight: 600;
+    font-size: var(--step--1);
+    box-shadow: var(--shadow-3);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 12px) scale(0.97);
+    transition: opacity var(--t-ui) var(--ease-in), transform var(--t-ui) var(--ease-in);
+  }
+  .toast.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    transition-timing-function: var(--ease-out);
+  }
+</style>

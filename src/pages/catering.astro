@@ -1,0 +1,185 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import EnquiryFields from '../components/EnquiryFields.astro';
+import Icon from '../components/Icon.astro';
+import { STORES } from '../data/stores';
+
+const packages = [
+  {
+    name: 'Bowl bar',
+    price: '$19.50',
+    unit: 'per guest',
+    min: 'From 12 guests',
+    detail: 'Two bases, three proteins (one plant-based), six toppings and three sauces, set up so guests build their own.',
+    image: { src: 'seoul-bbq-bowl-detail', alt: 'Seoul BBQ bowl with slaw, cucumber and sesame' },
+  },
+  {
+    name: 'Wrap & platter box',
+    price: '$16.90',
+    unit: 'per guest',
+    min: 'From 8 guests',
+    detail: 'Halved peri-peri chicken, falafel and smoky beef wraps with seasoned fries, slaw and dips, boxed for the table.',
+    image: { src: 'peri-peri-wrap', alt: 'Peri-peri chicken wrap halves' },
+  },
+  {
+    name: 'Grill feast',
+    price: '$26.00',
+    unit: 'per guest',
+    min: 'From 20 guests',
+    detail: 'Lemon herb and peri-peri chicken, ancient grains, chopped salad, hummus and flatbread, served family style.',
+    image: { src: 'feast', alt: 'Table spread of bowls, fries, flatbread and dips' },
+  },
+];
+---
+
+<Base title="Catering" description="Gourwest catering for 8 to 500 guests: bowl bars, wrap platters and grill feasts for offices and events in Melbourne, Auckland, Singapore and Kuala Lumpur.">
+  <PageIntro
+    label="Catering & events"
+    title="Feed the whole room, the Gourwest way"
+    lead="Team lunches, launches and celebrations for 8 to 500 guests. Every package flags dietary needs, and plant-based options are always included."
+  />
+
+  <section class="wrap" aria-label="Packages">
+    <ul class="packages" role="list">
+      {
+        packages.map((p) => (
+          <li class="package card reveal">
+            <img
+              src={`/images/food/${p.image.src}-640.webp`}
+              width="640"
+              height="400"
+              alt={p.image.alt}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="package__body">
+              <h2>{p.name}</h2>
+              <p class="package__price num">
+                {p.price} <span class="small muted">{p.unit}</span>
+              </p>
+              <p class="small label">{p.min}</p>
+              <p class="muted">{p.detail}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="small muted note">Demo pricing in AUD. Delivery within 10 km of a kitchen; we confirm the final quote by email.</p>
+  </section>
+
+  <section class="section" aria-labelledby="enquiry-title">
+    <div class="wrap enquiry">
+      <div class="enquiry__copy">
+        <p class="label">Request a quote</p>
+        <h2 id="enquiry-title">Tell us about your event</h2>
+        <p class="muted">We reply within one business day with a menu and quote. Your enquiry goes straight to our events team in Luminara CRM.</p>
+        <ul class="ticks" role="list">
+          <li><Icon name="check" size={18} /> Dietary and allergen labels on every tray</li>
+          <li><Icon name="check" size={18} /> Compostable packaging and serving ware</li>
+          <li><Icon name="check" size={18} /> 48 hours’ notice for most orders</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <form class="form-grid" data-enquiry novalidate>
+          <input type="hidden" name="kind" value="catering" />
+          <EnquiryFields messageLabel="What are you planning?" messagePlaceholder="Occasion, dietary needs, delivery address, serving time…">
+            <div class="field">
+              <label for="enq-guests">Guests</label>
+              <input id="enq-guests" class="input" name="guests" type="number" inputmode="numeric" min="8" max="500" required aria-describedby="enq-guests-error" />
+              <p class="error" id="enq-guests-error" data-error-for="guests" hidden></p>
+            </div>
+            <div class="field">
+              <label for="enq-date">Event date</label>
+              <input id="enq-date" class="input" name="eventDate" type="date" required aria-describedby="enq-date-error" />
+              <p class="error" id="enq-date-error" data-error-for="eventDate" hidden></p>
+            </div>
+            <div class="field span-all">
+              <label for="enq-store">Nearest kitchen</label>
+              <select id="enq-store" class="select" name="storeId" required>
+                {STORES.map((s) => <option value={s.id}>{s.name}, {s.city}</option>)}
+              </select>
+            </div>
+          </EnquiryFields>
+          <button class="btn btn--lg span-all" type="submit">Send enquiry</button>
+        </form>
+        <div class="done" hidden tabindex="-1" data-done>
+          <Icon name="circle-check" size={32} />
+          <h3>Enquiry received</h3>
+          <p class="muted">Reference <strong class="num" data-ref></strong>. Our events team will email you within one business day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '../scripts/enquiry';
+  import { getStore } from '../scripts/state';
+  const select = document.querySelector<HTMLSelectElement>('#enq-store');
+  if (select) select.value = getStore().id;
+</script>
+
+<style>
+  .packages {
+    display: grid;
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    margin: 0;
+    padding: 0;
+  }
+  .package {
+    overflow: hidden;
+  }
+  .package img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .package__body {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-5);
+  }
+  .package__body h2 {
+    font-size: var(--step-2);
+  }
+  .package__price {
+    font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .note {
+    margin-top: var(--s-4);
+  }
+  .enquiry {
+    display: grid;
+    gap: var(--s-6);
+    align-items: start;
+  }
+  @media (min-width: 960px) {
+    .enquiry {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+  }
+  .enquiry__copy {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .ticks {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+  }
+  .ticks li {
+    display: flex;
+    gap: var(--s-2);
+    align-items: center;
+  }
+  .ticks :global(svg) {
+    color: var(--ok);
+    flex: none;
+  }
+</style>

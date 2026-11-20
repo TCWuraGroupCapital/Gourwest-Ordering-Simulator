@@ -1,0 +1,518 @@
+@import './tokens.css';
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+  color: var(--forest-deep);
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--step-4);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-size: var(--step-3);
+}
+h3 {
+  font-size: var(--step-1);
+}
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+a {
+  color: inherit;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+::selection {
+  background: color-mix(in oklch, var(--gold-bright) 40%, transparent);
+}
+[hidden] {
+  display: none !important;
+}
+/* Lists marked role="list" are layout lists: no bullets (the role keeps them announced as lists in Safari). */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+}
+
+/* ---------- Layout ---------- */
+.wrap {
+  width: 100%;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section {
+  padding-block: var(--section);
+}
+.section--tint {
+  background: var(--surface-2);
+}
+.stack > * + * {
+  margin-top: var(--stack, var(--s-4));
+}
+.measure {
+  max-width: 34em;
+}
+.lead {
+  font-size: var(--step-1);
+  line-height: 1.5;
+  color: var(--fg-2);
+}
+.muted {
+  color: var(--fg-2);
+}
+.small {
+  font-size: var(--step--1);
+  line-height: 1.45;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.label {
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--s-4) var(--s-6);
+  margin-bottom: var(--s-6);
+}
+.section-head > div {
+  max-width: 40rem;
+}
+.section-head h2 + p {
+  margin-top: var(--s-3);
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.skip-link {
+  position: absolute;
+  left: var(--s-4);
+  top: -4rem;
+  z-index: 100;
+  padding: var(--s-3) var(--s-4);
+  background: var(--forest);
+  color: var(--on-forest);
+  border-radius: var(--r-1);
+  font-weight: 600;
+}
+.skip-link:focus-visible {
+  top: var(--s-4);
+  outline-color: var(--gold-bright);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  --btn-bg: var(--forest);
+  --btn-fg: var(--on-forest);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-height: 44px;
+  padding: 0.7rem 1.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-1);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 600;
+  font-size: var(--step--1);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--t-micro) var(--ease-out), background-color var(--t-ui) var(--ease-out), box-shadow var(--t-ui) var(--ease-out);
+}
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.btn:hover {
+  background: color-mix(in oklch, var(--btn-bg) 86%, black);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn--lg {
+  min-height: 52px;
+  padding: 0.9rem 1.6rem;
+  font-size: var(--step-0);
+}
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--forest);
+  border-color: var(--line-strong);
+}
+.btn--ghost:hover {
+  background: color-mix(in oklch, var(--forest) 7%, transparent);
+}
+.btn--gold {
+  --btn-bg: var(--gold-bright);
+  --btn-fg: oklch(0.2 0.03 80);
+}
+.btn--quiet {
+  --btn-bg: var(--surface-2);
+  --btn-fg: var(--forest);
+}
+.btn--quiet:hover {
+  background: var(--surface-3);
+}
+.btn--block {
+  width: 100%;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--forest);
+  cursor: pointer;
+  transition: background-color var(--t-micro) var(--ease-out), transform var(--t-micro) var(--ease-out);
+}
+.icon-btn:hover {
+  background: var(--surface-2);
+}
+.icon-btn:active {
+  transform: scale(0.94);
+}
+.icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 600;
+  color: var(--forest);
+  text-decoration: none;
+  min-height: 44px;
+}
+.link-arrow svg {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--t-ui) var(--ease-out);
+}
+.link-arrow:hover svg {
+  transform: translateX(3px);
+}
+
+/* ---------- Chips & badges ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-height: 44px;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--t-micro) var(--ease-out), color var(--t-micro) var(--ease-out);
+}
+.chip:hover {
+  background: var(--surface-2);
+}
+.chip[aria-pressed='true'],
+.chip[aria-current='true'] {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--on-forest);
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: color-mix(in oklch, var(--forest) 9%, transparent);
+  color: var(--forest);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.tag--promo {
+  background: var(--terracotta);
+  color: var(--on-terracotta);
+}
+
+/* ---------- Cards & surfaces ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  box-shadow: var(--shadow-1);
+}
+.panel {
+  padding: var(--s-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+}
+.notice {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-1);
+  background: color-mix(in oklch, var(--gold-bright) 16%, var(--surface));
+  border: 1px solid color-mix(in oklch, var(--gold-bright) 40%, transparent);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+.notice svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--gold);
+  margin-top: 2px;
+}
+.notice--bad {
+  background: color-mix(in oklch, var(--bad) 10%, var(--surface));
+  border-color: color-mix(in oklch, var(--bad) 35%, transparent);
+}
+.notice--bad svg {
+  color: var(--bad);
+}
+.notice--ok {
+  background: color-mix(in oklch, var(--ok) 10%, var(--surface));
+  border-color: color-mix(in oklch, var(--ok) 35%, transparent);
+}
+.notice--ok svg {
+  color: var(--ok);
+}
+
+/* ---------- Forms ---------- */
+.field {
+  display: grid;
+  gap: var(--s-2);
+}
+.field label,
+.field legend {
+  font-weight: 600;
+  font-size: var(--step--1);
+  color: var(--fg);
+}
+.field .hint {
+  font-size: var(--step--1);
+  color: var(--fg-2);
+}
+.input,
+.select,
+.textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-1);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 1rem;
+  transition: border-color var(--t-micro) var(--ease-out), box-shadow var(--t-micro) var(--ease-out);
+}
+.textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--fg-3);
+}
+.input:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--forest) 22%, transparent);
+  border-radius: var(--r-1);
+}
+.input[aria-invalid='true'],
+.select[aria-invalid='true'],
+.textarea[aria-invalid='true'] {
+  border-color: var(--bad);
+}
+.error {
+  color: var(--bad);
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+.form-grid {
+  display: grid;
+  gap: var(--s-5);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+.form-grid .span-all {
+  grid-column: 1 / -1;
+}
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.check input {
+  width: 24px;
+  height: 24px;
+  margin: 1px 0 0;
+  accent-color: var(--forest);
+  flex: none;
+}
+.hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Success panel that replaces a submitted form. */
+.done {
+  display: grid;
+  gap: var(--s-3);
+  justify-items: start;
+}
+.done > svg {
+  color: var(--ok);
+}
+
+/* ---------- Dish grid ---------- */
+.dish-grid {
+  display: grid;
+  gap: var(--s-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+}
+@media (max-width: 639px) {
+  .dish-grid {
+    gap: var(--s-3);
+  }
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--t-enter) var(--ease-out), transform var(--t-enter) var(--ease-out);
+  }
+  .js .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ---------- Page transitions ----------
+ * Same-site navigations cross-fade quickly, and a dish photo morphs from its menu card into the dish page
+ * and back (continuity: same object, new state). Names are set per navigation in Base.astro.
+ * Browsers without cross-document view transitions simply navigate. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+}
+::view-transition-group(dish-hero) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out);
+  border-radius: var(--r-2);
+  overflow: clip;
+}
+::view-transition-old(dish-hero),
+::view-transition-new(dish-hero) {
+  height: 100%;
+  object-fit: cover;
+}

@@ -1,0 +1,71 @@
+---
+/**
+ * Answer-first questions, always visible (no accordion) so guests, search engines and AI answer
+ * engines all read the same text. Emits its own FAQPage JSON-LD, joined to the page graph by @id.
+ */
+import { faqNode, ldJson, type Faq } from '../lib/seo';
+
+interface Props {
+  faqs: Faq[];
+  title?: string;
+  tint?: boolean;
+}
+const { faqs, title = 'Questions guests ask', tint = false } = Astro.props;
+const schema = { '@context': 'https://schema.org', ...faqNode(faqs, new URL(Astro.url.pathname, Astro.site)) };
+---
+
+<section class:list={['section', { 'section--tint': tint }]} aria-labelledby="faq-title">
+  <div class="wrap faq">
+    <h2 id="faq-title">{title}</h2>
+    <div class="faq__list">
+      {
+        faqs.map((f) => (
+          <div class="faq__item">
+            <h3>{f.q}</h3>
+            <p>{f.a}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={ldJson(schema)} />
+</section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .faq h2 {
+    font-size: var(--step-3);
+    text-wrap: balance;
+  }
+  .faq__list {
+    display: grid;
+    gap: var(--s-5) var(--s-7);
+  }
+  @media (min-width: 860px) {
+    .faq {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      align-items: start;
+    }
+    .faq__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .faq__item {
+    min-width: 0;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  .faq__item h3 {
+    font-size: var(--step-1);
+    text-wrap: balance;
+  }
+  .faq__item p {
+    max-width: 32em;
+    margin: var(--s-2) 0 0;
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+</style>

@@ -1,0 +1,373 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { STAGES } from '../../lib/tracking';
+---
+
+<Base title="Order placed" description="Your Gourwest pickup order confirmation." noindex>
+  <div class="wrap page">
+    <div class="missing panel" hidden data-missing>
+      <h1>No recent order on this device</h1>
+      <p class="muted">Your last order is kept only in this browser. If you just ordered, check with the kitchen before ordering again.</p>
+      <a class="btn" href="/menu/">Back to the menu</a>
+    </div>
+
+    <article class="receipt" hidden data-receipt>
+      <header class="receipt__head">
+        <span class="receipt__tick"><Icon name="circle-check" size={36} /></span>
+        <div>
+          <p class="label">Order placed</p>
+          <h1>Thanks, <span data-name></span> — we’re on it.</h1>
+          <p class="lead">Pick up at <strong data-store></strong>. Give the name <strong data-name></strong> at the pass.</p>
+        </div>
+      </header>
+
+      <section class="panel track" aria-labelledby="track-title">
+        <div class="track__head">
+          <div>
+            <p class="label">Pickup tracker</p>
+            <h2 id="track-title" class="track__eta num" data-eta></h2>
+          </div>
+          <p class="small muted num" data-eta-time></p>
+        </div>
+        <div class="track__bar" aria-hidden="true"><span data-bar></span></div>
+        <ol class="stages" role="list">
+          {STAGES.map((s) => <li data-stage={s.id}><span class="stages__dot" aria-hidden="true"></span>{s.title}</li>)}
+        </ol>
+        <p class="visually-hidden" role="status" data-announce></p>
+        <p class="small muted">Estimated from the kitchen’s usual prep time — this demo kitchen doesn’t send live updates.</p>
+      </section>
+
+      <div class="grid">
+        <section class="panel" aria-labelledby="items-title">
+          <div class="row">
+            <h2 id="items-title">Your order</h2>
+            <span class="tag num" data-ref></span>
+          </div>
+          <ul class="items" role="list" data-items></ul>
+          <div class="row total">
+            <span>Pay at pickup</span>
+            <span class="num" data-subtotal></span>
+          </div>
+        </section>
+
+        <section class="panel crm" aria-labelledby="crm-title">
+          <div class="row">
+            <h2 id="crm-title" data-crm-title>Synced to Luminara CRM</h2>
+            <Icon name="shield-check" size={22} />
+          </div>
+          <dl class="facts">
+            <div><dt>Order reference</dt><dd class="num" data-ref></dd></div>
+            <div data-synced><dt>CRM event</dt><dd class="num" data-event></dd></div>
+            <div data-synced><dt>CRM processing time</dt><dd class="num" data-latency></dd></div>
+            <div><dt>Placed</dt><dd class="num" data-time></dd></div>
+          </dl>
+          <p class="notice" data-member></p>
+        </section>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn--lg" href="/menu/">Order something else</a>
+        <a class="btn btn--lg btn--ghost" href="/locations/">Directions to the kitchen</a>
+      </div>
+    </article>
+  </div>
+</Base>
+
+<script>
+  import { formatAUD } from '../../lib/pricing';
+  import { STAGES, trackOrder } from '../../lib/tracking';
+  import { lastOrder } from '../../scripts/state';
+  import { tierProgress } from '../../data/club';
+
+  const order = lastOrder();
+  const pts = (n: number) => n.toLocaleString('en-AU');
+  const set = (sel: string, text: string) => document.querySelectorAll(sel).forEach((el) => (el.textContent = text));
+
+  function startTracker(placedAt: string, prepMinutes: number, storeName: string) {
+    const bar = document.querySelector<HTMLElement>('[data-bar]')!;
+    const announce = document.querySelector<HTMLElement>('[data-announce]')!;
+    const steps = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+    const baseTitle = document.title;
+    let shownStage = -1;
+    const tick = () => {
+      const t = trackOrder(placedAt, prepMinutes);
+      if (!t) return;
+      const ready = t.ready;
+      const clock = t.readyAt.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' });
+      set('[data-eta]', ready ? 'Ready at the pass' : `Ready in about ${t.minutesLeft} min`);
+      set('[data-eta-time]', ready ? `Since ${clock} at ${storeName}` : `Around ${clock} at ${storeName}`);
+      bar.style.transform = `scaleX(${t.progress})`;
+      steps.forEach((li, i) => (li.dataset.state = i < t.stage ? 'done' : i === t.stage ? 'current' : 'todo'));
+      document.title = ready ? `Ready to collect · ${baseTitle}` : `${t.minutesLeft} min · ${baseTitle}`;
+      // Announce stage changes only, never the per-minute countdown.
+      if (t.stage !== shownStage) {
+        if (shownStage !== -1) announce.textContent = STAGES[t.stage].title;
+        shownStage = t.stage;
+      }
+      if (!t.active) clearInterval(timer);
+    };
+    const timer = setInterval(tick, 15_000);
+    tick();
+  }
+
+  if (!order) {
+    document.querySelector<HTMLElement>('[data-missing]')!.hidden = false;
+  } else {
+    document.querySelector<HTMLElement>('[data-receipt]')!.hidden = false;
+    set('[data-name]', order.pickupName);
+    set('[data-store]', `${order.store.name}, ${order.store.city}`);
+    startTracker(order.placedAt, order.store.prepMinutes, order.store.name);
+    set('[data-ref]', order.orderRef);
+    set('[data-subtotal]', formatAUD(order.subtotal));
+    if (order.crm) {
+      set('[data-event]', `#${order.crm.eventId}`);
+      set('[data-latency]', `${order.crm.latencyMs} ms`);
+    } else {
+      // The kitchen has the order; the server resends it to the CRM once the CRM answers again.
+      set('[data-crm-title]', 'Queued for Luminara CRM');
+      document.querySelectorAll<HTMLElement>('[data-synced]').forEach((el) => (el.hidden = true));
+    }
+    set('[data-time]', new Date(order.placedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' }));
+
+    const items = document.querySelector('[data-items]')!;
+    for (const line of order.lines) {
+      const li = document.createElement('li');
+      const top = document.createElement('div');
+      top.className = 'row';
+      const name = document.createElement('strong');
+      name.textContent = `${line.qty} × ${line.name}`;
+      const price = document.createElement('span');
+      price.className = 'num';
+      price.textContent = formatAUD(line.total);
+      top.append(name, price);
+      li.append(top);
+      const extra = [...line.summary, line.note && `“${line.note}”`].filter(Boolean).join(' · ');
+      if (extra) {
+        const p = document.createElement('p');
+        p.className = 'small muted';
+        p.textContent = extra;
+        li.append(p);
+      }
+      items.append(li);
+    }
+
+    const member = document.querySelector<HTMLElement>('[data-member]')!;
+    if (!order.member) member.textContent = 'Guest order — add your Club number next time to earn points.';
+    else if (!order.crm) {
+      member.textContent = `${pts(order.member.pointsEarned)} points for ${order.member.number} will be added automatically once the CRM sync catches up.`;
+    } else if (order.member.updated) {
+      const { balance, number, pointsEarned } = order.member;
+      member.classList.add('notice--ok');
+      member.textContent = `${pts(pointsEarned)} points added to ${number}.`;
+      if (typeof balance === 'number') {
+        // Tier nudge: the balance came back only because this device placed the order.
+        const { tier, next, toNext } = tierProgress(balance);
+        const nudge = document.createElement('strong');
+        nudge.className = 'nudge';
+        nudge.textContent = `You’re ${tier.name} with ${pts(balance)} pts${next ? `: ${pts(toNext)} to ${next.name}` : ''}`;
+        member.append(nudge);
+      } else member.append(' Your tier updates in the CRM straight away.');
+    } else member.textContent = `Club number ${order.member.number} wasn’t found — your order was saved without points.`;
+  }
+</script>
+
+<style>
+  /* The receipt renders client-side; reserving the viewport keeps the footer from jumping when it appears. */
+  .page {
+    min-height: 100dvh;
+    padding-block: clamp(2rem, 5vw, 4rem) var(--s-6);
+  }
+  .missing {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: start;
+    max-width: 36rem;
+  }
+  .missing h1 {
+    font-size: var(--step-3);
+  }
+  .receipt {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .receipt__head {
+    display: flex;
+    gap: var(--s-5);
+    align-items: flex-start;
+  }
+  .receipt__tick {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: color-mix(in oklch, var(--ok) 14%, var(--surface));
+    color: var(--ok);
+  }
+  .receipt__head h1 {
+    font-size: var(--step-3);
+    margin-block: var(--s-2) var(--s-3);
+  }
+  .track__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-5);
+  }
+  .panel .track__eta {
+    font-size: var(--step-3);
+    color: var(--forest-deep);
+  }
+  .track__bar {
+    height: 8px;
+    border-radius: var(--r-pill);
+    background: var(--surface-3);
+    overflow: hidden;
+  }
+  /* Progress moves by transform only; the 15 s tick glides rather than jumps. */
+  .track__bar span {
+    display: block;
+    height: 100%;
+    background: var(--forest);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 900ms var(--ease-out);
+  }
+  .stages {
+    display: grid;
+    gap: var(--s-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .stages li {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    color: var(--fg-3);
+    font-weight: 600;
+  }
+  .stages__dot {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    transition: background-color var(--t-ui) var(--ease-out);
+  }
+  .stages li[data-state='done'] {
+    color: var(--fg-2);
+  }
+  .stages li[data-state='done'] .stages__dot {
+    background: currentColor;
+  }
+  .stages li[data-state='current'] {
+    color: var(--forest-deep);
+  }
+  .stages li[data-state='current'] .stages__dot {
+    background: var(--gold-bright);
+    border-color: var(--gold-bright);
+    animation: stage-pulse 1.6s var(--ease-out) infinite;
+  }
+  .stages li[data-stage='ready'][data-state='current'] .stages__dot {
+    background: var(--ok);
+    border-color: var(--ok);
+    animation: none;
+  }
+  /* Emphasis: the one live stage breathes so the eye finds it. */
+  @keyframes stage-pulse {
+    50% {
+      transform: scale(1.35);
+      opacity: 0.6;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track__bar span {
+      transition: none;
+    }
+    .stages li[data-state='current'] .stages__dot {
+      animation: none;
+    }
+  }
+  .grid {
+    display: grid;
+    gap: var(--s-5);
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+  }
+  .panel {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .panel h2 {
+    font-size: var(--step-1);
+  }
+  .row,
+  .items :global(.row) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+  }
+  .items {
+    display: grid;
+    gap: var(--s-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .items :global(li) {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .total {
+    font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .crm :global(svg) {
+    color: var(--ok);
+  }
+  /* The tier nudge sits on its own line under the points sentence. */
+  [data-member] {
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+  [data-member] :global(.nudge) {
+    font-size: var(--step-0);
+    color: var(--forest-deep);
+    font-variant-numeric: tabular-nums;
+  }
+  .facts {
+    display: grid;
+    gap: var(--s-3);
+    margin: 0;
+  }
+  .facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .facts dt {
+    color: var(--fg-2);
+  }
+  .facts dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+</style>

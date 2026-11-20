@@ -1,0 +1,210 @@
+---
+import FoodPhoto from './FoodPhoto.astro';
+import Icon from './Icon.astro';
+import { DIETARY_LABELS, isCustomisable, type MenuItem } from '../data/menu';
+import { formatAUD } from '../lib/pricing';
+
+interface Props {
+  item: MenuItem;
+  headingLevel?: 'h2' | 'h3';
+  /** For cards in the first frame (the top of the menu), so their photos aren't lazy-loaded. */
+  eager?: boolean;
+}
+const { item, headingLevel: H = 'h3', eager = false } = Astro.props;
+const customisable = isCustomisable(item);
+const href = `/menu/${item.slug}/`;
+---
+
+<article class="dish card" data-dish={item.slug} data-dietary={item.dietary.join(' ')} data-allergens={item.allergens.join(' ')}>
+  {
+    item.photo && (
+      <div class="dish__media">
+        <FoodPhoto photo={item.photo} sizes="(min-width: 1200px) 300px, (min-width: 640px) 45vw, 112px" class="dish__img" eager={eager} />
+        {item.badge && <span class="tag tag--promo dish__badge">{item.badge}</span>}
+      </div>
+    )
+  }
+  <div class="dish__body">
+    <div class="dish__title">
+      <H><a href={href}>{item.name}</a></H>
+      <span class="dish__price num">{formatAUD(item.price)}</span>
+    </div>
+    <p class="dish__blurb">{item.blurb}</p>
+    <p class="small muted num">{item.kcal}&nbsp;kcal · {item.proteinG}&nbsp;g protein</p>
+    <ul class="dish__tags" role="list">
+      {item.dietary.slice(0, 3).map((d) => <li class="tag">{DIETARY_LABELS[d]}</li>)}
+    </ul>
+    <div class="dish__foot">
+      <button class="btn" type="button" data-quick-add={item.slug} aria-label={`Add ${item.name} to bag${customisable ? ' as the chef builds it' : ''}`}>
+        <Icon name="plus" size={16} />
+        Add
+      </button>
+      {
+        customisable && (
+          <a class="btn btn--quiet" href={href} aria-label={`Customise ${item.name}`}>
+            Customise
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .dish {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow var(--t-ui) var(--ease-out), transform var(--t-ui) var(--ease-out);
+  }
+  .dish:hover {
+    box-shadow: var(--shadow-2);
+  }
+  .dish__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+  .dish__media :global(.dish__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 700ms var(--ease-out);
+  }
+  .dish:hover :global(.dish__img) {
+    transform: scale(1.04);
+  }
+  .dish__badge {
+    position: absolute;
+    top: var(--s-3);
+    left: var(--s-3);
+  }
+  .dish__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    flex: 1;
+    padding: var(--s-4) var(--s-4) var(--s-4);
+  }
+  .dish__title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+  }
+  .dish__title :is(h2, h3) {
+    font-size: 1.2rem;
+    min-width: 0;
+  }
+  .dish__title a {
+    text-decoration: none;
+  }
+  /* Whole card is the hit area for the dish link; the action button sits above it. */
+  .dish__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .dish__price {
+    flex: none;
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .dish__blurb {
+    color: var(--fg-2);
+    font-size: var(--step-0);
+    line-height: 1.55;
+  }
+  .dish__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dish__foot {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: var(--s-2);
+    margin-top: auto;
+    padding-top: var(--s-2);
+  }
+  .dish__foot .btn {
+    position: relative;
+    z-index: 1;
+    padding-inline: var(--s-3);
+  }
+
+  /*
+   * Phones: a menu row, not a poster. Text left, a 7rem photo right with Add sitting on its lower edge,
+   * so about five dishes fit a screen instead of one. The whole row still opens the dish to customise.
+   */
+  @media (max-width: 639px) {
+    /* The floating concierge would sit on the rows' Add buttons; pages with rows offer it inline instead. */
+    :global(body:has(.dish) .concierge-fab) {
+      display: none;
+    }
+    .dish {
+      --thumb: 7rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--thumb);
+      gap: var(--s-4);
+      min-height: calc(var(--thumb) + 2 * var(--s-3) + 22px);
+      padding: var(--s-3);
+    }
+    .dish:hover {
+      transform: none;
+    }
+    .dish__media {
+      grid-column: 2;
+      grid-row: 1;
+      aspect-ratio: 1;
+      border-radius: calc(var(--r-2) - var(--s-3));
+    }
+    .dish__badge,
+    .dish__tags,
+    .dish__foot .btn--quiet {
+      display: none;
+    }
+    .dish__body {
+      grid-column: 1;
+      grid-row: 1;
+      gap: var(--s-1);
+      padding: var(--s-1) 0 0;
+    }
+    .dish__title {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .dish__title :is(h2, h3) {
+      font-size: 1.125rem;
+    }
+    .dish__blurb {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow: hidden;
+      font-size: 0.9375rem;
+      line-height: 1.45;
+    }
+    /* Add straddles the photo's bottom edge, centred under it: the Uber Eats / Deliveroo thumb pattern. */
+    .dish__foot {
+      position: absolute;
+      top: calc(var(--s-3) + var(--thumb) - 22px);
+      right: calc(var(--s-3) + var(--thumb) / 2);
+      translate: 50% 0;
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+    .dish__foot .btn {
+      padding-inline: var(--s-4);
+      box-shadow: var(--shadow-2);
+    }
+  }
+</style>

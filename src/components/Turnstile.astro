@@ -1,0 +1,17 @@
+---
+/**
+ * Cloudflare Turnstile widget. It renders inside the enclosing form and adds a hidden
+ * `cf-turnstile-response` field; the API functions verify it. Locally the public test key
+ * (always passes) is used, so development works without an account.
+ */
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+---
+
+<div class="turnstile cf-turnstile span-all" data-sitekey={siteKey} data-theme="auto" data-size="flexible" data-appearance="interaction-only"></div>
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<style>
+  .turnstile:empty {
+    display: none;
+  }
+</style>

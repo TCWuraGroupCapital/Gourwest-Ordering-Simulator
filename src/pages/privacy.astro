@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Prose from '../components/Prose.astro';
+---
+
+<Base title="Privacy policy" description="What the Gourwest ordering simulator collects, where it goes and how long it is kept.">
+  <PageIntro label="Legal" title="Privacy policy" lead="Last updated 18 November 2026. This site is a demonstration simulator: please use made-up details." />
+  <Prose>
+    <h2>Who we are</h2>
+    <p>
+      Gourwest is a fictional restaurant brand used to demonstrate online ordering into Luminara CRM. The site is operated for that demonstration; it
+      takes no payments and should not receive real personal information.
+    </p>
+
+    <h2>What we collect and why</h2>
+    <ul>
+      <li><strong>Orders:</strong> the dishes you choose, your pickup kitchen, a first name for the pickup shelf and, optionally, a Club member number. The name stays on this site; the CRM receives only the order reference, region, total spend, points and member number. When you order with a member number, the CRM replies with that member’s new points balance and tier, which are shown only to you as the person who placed that order; there is no way to look up a balance by member number alone.</li>
+      <li><strong>Catering and contact enquiries:</strong> your name, email, optional phone and message, so our team can reply. These may be stored as a contact and lead in Luminara CRM.</li>
+      <li><strong>Concierge messages:</strong> what you type to the menu concierge. When the AI concierge is enabled, your messages, the dishes in your bag and your pickup kitchen are sent to Groq (or NVIDIA as a fallback) to generate a reply. Don’t include personal details.</li>
+      <li><strong>On your device:</strong> your bag, chosen kitchen and theme are kept in your browser’s local storage; your last order (dishes, pickup name and kitchen) is kept so the pickup tracker works across tabs and is deleted once it is collected; the dishes alone (no name, member number or note) are kept as “Your usual” for a one-tap reorder until you press Forget or place your next order; after a Club order, the member number and its points balance are kept together so your bag can show how close the next order takes you to the next tier, and are replaced by your next Club order. We set no tracking or advertising cookies.</li>
+    </ul>
+
+    <h2>Who processes it</h2>
+    <ul>
+      <li>Cloudflare hosts the site and runs the order and enquiry functions. When Cloudflare Web Analytics is turned on, it collects page-view statistics (page address, referrer and browser type) without cookies.</li>
+      <li>Luminara CRM receives orders and enquiries.</li>
+      <li>Groq and NVIDIA process concierge messages when that feature is turned on.</li>
+    </ul>
+
+    <h2>How long we keep it</h2>
+    <p>Order replay records (including any points balance returned with the order) are kept for 24 hours to prevent duplicate orders. CRM records follow the CRM’s own retention settings. You can clear on-device data at any time by clearing this site’s storage in your browser.</p>
+
+    <h2>Your choices</h2>
+    <p>You can ask to see, correct or delete enquiry data by choosing “Privacy or my data” on the <a href="/contact/">contact form</a>. Under the Australian Privacy Principles you may also complain to the Office of the Australian Information Commissioner.</p>
+  </Prose>
+</Base>

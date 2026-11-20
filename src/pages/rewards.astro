@@ -1,0 +1,265 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import Icon from '../components/Icon.astro';
+import Faq from '../components/Faq.astro';
+import { CLUB_FAQ, POINTS_FAQ } from '../lib/seo';
+import { POINTS_PER_DOLLAR } from '../lib/pricing';
+
+import { TIERS as tiers } from '../data/club';
+---
+
+<Base title="Gourwest Club" description="Earn 10 points per dollar at Gourwest. Climb from Bronze to Silver, Gold and Platinum for free sides, bowls and tastings.">
+  <PageIntro
+    label="Gourwest Club"
+    title="Good taste deserves good rewards"
+    lead={`Earn ${POINTS_PER_DOLLAR} points for every dollar you spend online or in store. Your tier updates the moment your order reaches our CRM.`}
+  />
+
+  <section class="wrap" aria-labelledby="tiers-title">
+    <h2 id="tiers-title" class="visually-hidden">Tiers</h2>
+    <ol class="tiers" role="list">
+      {
+        tiers.map((t, i) => (
+          <li class={`tier tier--${t.name.toLowerCase()} reveal`}>
+            <p class="label num">{t.from === 0 ? 'From your first order' : `${t.from.toLocaleString('en-AU')} points`}</p>
+            <h3>{t.name}</h3>
+            <ul role="list">
+              {t.perks.map((p) => (
+                <li>
+                  <Icon name="check" size={16} /> {p}
+                </li>
+              ))}
+            </ul>
+            {i < tiers.length - 1 && <span class="tier__next small muted num">Next: {tiers[i + 1].from.toLocaleString('en-AU')} pts</span>}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="calc-title">
+    <div class="wrap calc">
+      <div class="calc__copy">
+        <p class="label">Points calculator</p>
+        <h2 id="calc-title">How fast will you climb?</h2>
+        <p class="muted">Move the slider to your usual weekly spend.</p>
+      </div>
+      <div class="panel calc__panel">
+        <label class="calc__label" for="spend">Weekly spend <output class="num" for="spend" data-spend-out>$40</output></label>
+        <input id="spend" type="range" min="10" max="200" step="5" value="40" data-spend />
+        <dl class="calc__out">
+          <div>
+            <dt>Points a year</dt>
+            <dd class="num" data-points-year>20,800</dd>
+          </div>
+          <div>
+            <dt>Your tier</dt>
+            <dd data-tier>Platinum</dd>
+          </div>
+          <div>
+            <dt>Reached in</dt>
+            <dd class="num" data-weeks>13 weeks</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-labelledby="how-title">
+    <div class="wrap how">
+      <div>
+        <p class="label">How it works</p>
+        <h2 id="how-title">Three steps to your first reward</h2>
+      </div>
+      <ol class="steps" role="list">
+        <li>
+          <h3>Join in store</h3>
+          <p class="muted">Ask any Gourwest kitchen for a Club card. Your member number looks like GW-AU-1006.</p>
+        </li>
+        <li>
+          <h3>Add your number at checkout</h3>
+          <p class="muted">Enter it on the bag page; points land on your profile as soon as the order is placed.</p>
+        </li>
+        <li>
+          <h3>Redeem at the counter</h3>
+          <p class="muted">Show your number when you pick up to use birthday treats and free bowls.</p>
+        </li>
+      </ol>
+      <div class="notice">
+        <Icon name="info" />
+        <p>
+          <strong>Demo simulator:</strong> online sign-up isn’t available. Try a seeded member at checkout — GW-AU-1006 (Silver, 840 points) crosses into Gold with a $120 order.
+        </p>
+      </div>
+      <a class="btn btn--lg" href="/menu/">Start earning</a>
+    </div>
+  </section>
+  <Faq faqs={[CLUB_FAQ, POINTS_FAQ]} />
+</Base>
+
+<script>
+  import { tierFor } from '../data/club';
+  import { POINTS_PER_DOLLAR } from '../lib/pricing';
+
+  const slider = document.querySelector<HTMLInputElement>('[data-spend]')!;
+  const set = (sel: string, text: string) => (document.querySelector(sel)!.textContent = text);
+
+  function update() {
+    const weekly = Number(slider.value);
+    const perWeek = weekly * POINTS_PER_DOLLAR;
+    const year = perWeek * 52;
+    const tier = tierFor(year);
+    const weeks = tier.from === 0 ? 0 : Math.ceil(tier.from / perWeek);
+    set('[data-spend-out]', `$${weekly}`);
+    slider.setAttribute('aria-valuetext', `$${weekly} a week`);
+    set('[data-points-year]', year.toLocaleString('en-AU'));
+    set('[data-tier]', tier.name);
+    set('[data-weeks]', weeks === 0 ? 'First order' : `${weeks} week${weeks === 1 ? '' : 's'}`);
+  }
+  slider.addEventListener('input', update);
+  update();
+</script>
+
+<style>
+  .tiers {
+    display: grid;
+    gap: var(--s-4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    margin: 0;
+    padding: 0;
+  }
+  .tier {
+    position: relative;
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    padding: var(--s-5);
+    border-radius: var(--r-2);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .tier h3 {
+    font-size: var(--step-2);
+  }
+  .tier ul {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+  }
+  .tier li {
+    display: flex;
+    gap: var(--s-2);
+    align-items: flex-start;
+    font-size: 0.9375rem;
+  }
+  .tier li :global(svg) {
+    flex: none;
+    margin-top: 4px;
+    color: var(--gold);
+  }
+  .tier--gold {
+    border-color: color-mix(in oklch, var(--gold-bright) 60%, transparent);
+  }
+  .tier--platinum {
+    background: var(--forest-deep);
+    color: var(--on-forest);
+    border-color: transparent;
+  }
+  .tier--platinum h3 {
+    color: var(--on-forest);
+  }
+  .tier--platinum .label {
+    color: var(--on-forest);
+  }
+  .tier--platinum li :global(svg) {
+    color: var(--gold-bright);
+  }
+  .tier__next {
+    margin-top: var(--s-2);
+  }
+  .calc {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .calc {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    }
+  }
+  .calc__copy {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .calc__panel {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .calc__label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+  }
+  .calc__label output {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--forest-deep);
+  }
+  input[type='range'] {
+    width: 100%;
+    height: 44px;
+    accent-color: var(--forest);
+  }
+  .calc__out {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--s-4);
+    margin: 0;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  .calc__out dt {
+    font-size: var(--step--1);
+    color: var(--fg-2);
+  }
+  .calc__out dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 600;
+    color: var(--forest-deep);
+  }
+  .how {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+  }
+  .steps {
+    display: grid;
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+    width: 100%;
+  }
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .steps li::before {
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-on-surface": "#eff2eb", "tertiary": "#431100", "on-primary-fixed": "#002117", "surface-dim": "#d8dbd5", "outline-variant": "#c1c8c3", "on-primary": "#ffffff", "outline": "#717975", "on-tertiary": "#ffffff", "primary-fixed-dim": "#a6cfbf", "on-secondary": "#ffffff", "primary-container": "#173e32", "background": "#f7faf4", "surface-container-lowest": "#ffffff", "surface-variant": "#e0e3dd", "secondary": "#725c20", "secondary-fixed-dim": "#e1c37d", "secondary-container": "#ffdf96", "tertiary-fixed": "#ffdbcf", "error": "#ba1a1a", "inverse-surface": "#2d312d", "tertiary-fixed-dim": "#ffb59b", "on-secondary-fixed": "#251a00", "surface-container-highest": "#e0e3dd", "secondary-fixed": "#ffdf96", "on-error-container": "#93000a", "on-surface-variant": "#414845", "on-tertiary-container": "#e98662", "primary": "#00281d", "on-secondary-fixed-variant": "#584409", "on-surface": "#191d19", "tertiary-container": "#652105", "on-error": "#ffffff", "surface-tint": "#406658", "inverse-primary": "#a6cfbf", "on-background": "#191d19", "surface-container": "#ecefe8", "primary-fixed": "#c2ecda", "surface-container-high": "#e6e9e3", "on-primary-container": "#81a999", "on-tertiary-fixed": "#380d00", "on-primary-fixed-variant": "#284e41", "on-secondary-container": "#786226", "on-tertiary-fixed-variant": "#793013", "error-container": "#ffdad6", "surface": "#f7faf4", "surface-container-low": "#f2f5ee", "surface-bright": "#f7faf4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "1rem", "space-sm": "0.5rem", "space-xl": "2.5rem", "margin-mobile": "1rem", "gutter": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem", "space-lg": "1.5rem", "margin": "2.5rem" }, "fontFamily": { "display-lg-mobile": ["Playfair Display"], "headline-md": ["Playfair Display"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Playfair Display"], "display-lg": ["Playfair Display"], "headline-lg": ["Playfair Display"], "body-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"] }, "fontSize": { "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "700" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "0em", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-primary-container text-on-primary py-space-xs px-margin-mobile lg:px-margin text-center font-label-sm uppercase tracking-wider flex items-center justify-center gap-space-sm"><span class="material-symbols-outlined text-[16px] text-secondary-container">bolt</span><span>✨ Pick up in 15 mins at Gourwest Melbourne Central · Free delivery on your first order over $35 AUD</span></div><div class="h-20 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md shrink-0"><a class="flex items-center gap-space-sm focus:outline-none" data-path="menu" href="#"><img alt="Gourwest logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDwphynppR0fZFqa1lttJRpc5ASogx_cJ97QAHDA0DSARbrYhsTuvbT7rO7mAiBtmjsQhtPzYRS8kPsutG9hTUKc8ucODviTCMQErqwnL3NU1dG8eGwRL1h81zLEctqIAvh6CXZKhqdxv6-eXlk2yCmbn1M19e8VciAij8Mf1FS1LGPtp-NYsQIsNY-r_LMYfQC1fql-SuALyiino6IUxAqDF7w2lTruDq-1ogk4_EtHnzrJsrdkqew4TE"/><div class="flex flex-col"><span class="font-headline-sm text-primary tracking-tight font-bold">GOURWEST</span><span class="font-label-sm text-secondary tracking-normal font-medium hidden sm:inline-block">Flavours united. Worldwide.</span></div></a></div><nav class="hidden lg:flex items-center gap-space-lg font-label-lg" data-active-classes="text-primary font-bold after:w-full"><a aria-current="page" class="transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-primary after:transition-all text-primary font-bold after:w-full" data-path="menu" href="#">Menu</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="our-story" href="#">Our Story</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="locations" href="#">Locations</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="rewards" href="#">Rewards</a><a class="text-on-surface-variant hover:text-on-surface transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-primary after:transition-all" data-path="catering" href="#">Catering</a></nav><div class="flex items-center gap-space-sm sm:gap-space-md shrink-0"><button class="hidden sm:flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md transition-colors" type="button"><span class="text-[14px]">🇦🇺</span><span>Australia (AUD)</span><span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span></button><a class="relative flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface" data-path="cart" href="#"><span class="material-symbols-outlined text-[20px] text-primary">shopping_bag</span><span class="hidden md:inline font-label-md text-on-surface">2 items · $34.80 AUD</span><span class="md:hidden flex items-center justify-center w-4 h-4 rounded-full bg-secondary text-on-secondary font-label-sm text-[9px]">2</span></a><a class="hidden sm:inline-flex items-center justify-center px-space-md py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-lg transition-all shadow-[0_2px_8px_rgba(23,62,50,0.15)] ring-1 ring-secondary-container/40" data-path="menu" href="#">Order online</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1 shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<!-- Top Location & Pickup Metadata Bar -->
+<div class="w-full bg-surface-container-low px-margin-mobile lg:px-margin py-space-sm">
+<div class="max-w-[1280px] mx-auto flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm font-label-md text-on-surface">
+<a class="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors" data-path="menu" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back to Menu</span>
+</a>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5 font-label-sm text-secondary tracking-wide uppercase">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Melbourne Flinders Lane</span>
+</div>
+<span class="text-outline-variant hidden sm:inline">•</span>
+<span class="text-on-surface-variant font-body-sm hidden sm:inline">Pickup ready in 10-15 mins</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-1 font-label-sm bg-secondary-container/50 text-on-secondary-fixed-variant px-2.5 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+<span>Popular Lunch Special</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Main Customiser Interactive Workarea -->
+<div class="w-full max-w-[1280px] mx-auto px-margin-mobile lg:px-margin py-space-md lg:py-space-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column: Editorial Dish Spotlight (Sticky on desktop) -->
+<aside class="lg:col-span-5 lg:sticky lg:top-28 flex flex-col gap-space-md">
+<!-- Visual Food Card Showcase -->
+<div class="rounded-xl overflow-hidden bg-surface-container-lowest shadow-md">
+<div class="relative w-full aspect-[4/3] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" data-alt="Close-up gourmet photography of a Seoul BBQ Chicken Bowl on rustic linen tablecloth. Charred glazed barbecue chicken garnished with toasted white sesame and finely sliced spring onions sits beside steaming fragrant sushi rice, crunchy red and green cabbage rainbow slaw, and crisp Japanese cucumbers. Golden afternoon Melbourne sunlight, soft shadows, warm natural ceramics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZmENpnys3wKHyW7mCFSZgmucnstnyJN5ilCuf2ynxytFWeDPCmz9vveSwDG27DfoZw9V9Dl2fIhgnui637u36zrJvWtZwWr0gQ1n-ezPVIEag4EUu1COTLB0gHpFq8wN0MPFbSX0J_u-HtMx6LNHOINyGDDvpRplRvoXQ6TQ_HuNulTSRYIbnT7aznA7Z0swiCmRPG4OHUUCXxaduiS60lzJi2HNACt2pfYHuJqo8"/>
+<div class="absolute top-space-sm left-space-sm flex gap-space-xs">
+<span class="bg-primary-container text-on-primary font-label-sm px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                Chef's Signature
+              </span>
+<span class="bg-surface-container-lowest/90 backdrop-blur text-primary font-label-sm px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                Flavour Focus
+              </span>
+</div>
+<div class="absolute bottom-space-sm right-space-sm bg-surface-container-lowest/95 backdrop-blur-md px-space-sm py-1 rounded-lg shadow-sm flex items-center gap-1 font-label-sm text-primary">
+<span class="material-symbols-outlined text-[16px] text-secondary">star</span>
+<span class="font-bold">4.9</span>
+<span class="text-on-surface-variant font-normal">(340+ reviews)</span>
+</div>
+</div>
+<div class="p-space-md lg:p-space-lg flex flex-col gap-space-sm">
+<div class="flex items-baseline justify-between gap-space-sm">
+<h1 class="font-headline-lg text-primary leading-tight">Seoul BBQ Chicken Bowl</h1>
+<span class="font-headline-md text-primary font-bold shrink-0">$17.90 <span class="font-label-sm text-on-surface-variant font-normal">AUD</span></span>
+</div>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+              Korean-inspired flame-grilled BBQ chicken with charred sesame, fragrant sushi rice, crunchy rainbow slaw, Japanese cucumbers and savoury roasted sesame dressing. Crafted with locally sourced Victorian produce.
+            </p>
+<!-- Dietary and Prep Pills -->
+<div class="flex flex-wrap gap-1.5 pt-space-xs">
+<span class="bg-surface-container px-2.5 py-1 rounded-full font-label-sm text-on-surface-variant">~680 kcal</span>
+<span class="bg-surface-container px-2.5 py-1 rounded-full font-label-sm text-primary font-bold">42g Protein</span>
+<span class="bg-surface-container px-2.5 py-1 rounded-full font-label-sm text-on-surface-variant">10–15 mins prep</span>
+<span class="bg-surface-container-high px-2.5 py-1 rounded-full font-label-sm text-secondary font-bold">Dairy Free</span>
+</div>
+<!-- Allergen Notice Callout -->
+<div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-start gap-space-xs text-on-surface-variant font-body-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">info</span>
+<p>
+<strong class="text-on-surface font-semibold">Allergen Notice:</strong> Contains sesame, soy, gluten. Prepared in a dynamic kitchen using shared equipment. Customise ingredients below or speak with our team for dietary advice.
+              </p>
+</div>
+</div>
+</div>
+<!-- Kitchen Guarantee / Craftsmanship Stamp -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-full bg-secondary-container/40 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[24px]">workspace_premium</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-primary">Master Grill Process</span>
+<span class="font-body-sm text-on-surface-variant">Glazed twice under open flame to caramelise authentic Korean gochugaru and wildflower honey notes.</span>
+</div>
+</div>
+</aside>
+<!-- Right Column: Interactive Customiser Stepper -->
+<section class="lg:col-span-7 flex flex-col gap-space-lg pb-32">
+<!-- Header Guidance -->
+<div class="flex flex-col gap-1 pb-space-xs">
+<span class="font-label-sm text-secondary uppercase tracking-widest">Tailored to your palate</span>
+<h2 class="font-headline-md text-primary">Customise Your Bowl</h2>
+<p class="font-body-md text-on-surface-variant">Choose your grain foundation, adjust protein options, and pick your favourite dressing.</p>
+</div>
+<!-- STEP 1: BASE SELECTION (Required) -->
+<fieldset class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">1</span>
+<legend class="font-headline-sm text-primary">Choose Your Base</legend>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-label-sm uppercase tracking-wider font-semibold">Required</span>
+</div>
+<p class="font-body-sm text-on-surface-variant -mt-2">Select 1 option to build your bowl foundation.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm" id="base-options-group">
+<!-- Option 1: Default -->
+<label class="relative flex items-center justify-between p-space-md rounded-lg cursor-pointer transition-all bg-surface-container-low hover:bg-surface-container" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input checked="" class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="base-choice" type="radio" value="sushi-rice"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-primary font-bold">Fragrant Sushi Rice</span>
+<span class="font-body-sm text-on-surface-variant">Steamed lightly seasoned koshihikari</span>
+</div>
+</div>
+<span class="font-label-sm text-secondary font-semibold shrink-0">Included</span>
+</label>
+<!-- Option 2 -->
+<label class="relative flex items-center justify-between p-space-md rounded-lg cursor-pointer transition-all bg-surface-container-low hover:bg-surface-container" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="base-choice" type="radio" value="ancient-grains"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Ancient Grains & Brown Rice</span>
+<span class="font-body-sm text-on-surface-variant">High fibre, nutty spelt & quinoa</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+$0.00</span>
+</label>
+<!-- Option 3 -->
+<label class="relative flex items-center justify-between p-space-md rounded-lg cursor-pointer transition-all bg-surface-container-low hover:bg-surface-container" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="base-choice" type="radio" value="mixed-greens"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Mixed Crisp Greens</span>
+<span class="font-body-sm text-on-surface-variant">Baby spinach, kale & tatsoi</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+$0.00</span>
+</label>
+<!-- Option 4 -->
+<label class="relative flex items-center justify-between p-space-md rounded-lg cursor-pointer transition-all bg-surface-container-low hover:bg-surface-container" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="base-choice" type="radio" value="half-half"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Half Rice & Half Greens</span>
+<span class="font-body-sm text-on-surface-variant">Balanced everyday energy</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+$0.00</span>
+</label>
+</div>
+</fieldset>
+<!-- STEP 2: PROTEIN SELECTION & UPGRADES (Required) -->
+<fieldset class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">2</span>
+<legend class="font-headline-sm text-primary">Protein Selection & Upgrades</legend>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-label-sm uppercase tracking-wider font-semibold">Required</span>
+</div>
+<p class="font-body-sm text-on-surface-variant -mt-2">Stick with our classic BBQ chicken or swap for your dietary preference.</p>
+<div class="flex flex-col gap-space-sm" id="protein-options-group">
+<!-- Included Standard -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input checked="" class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="protein-choice" type="radio" value="bbq-chicken"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-primary font-bold">Korean BBQ Charred Chicken</span>
+<span class="bg-surface-container-high text-primary px-2 py-0.5 rounded-full font-label-sm">Standard</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">Free-range chicken breast grilled with dark soy, sesame & garlic</span>
+</div>
+</div>
+<span class="font-label-sm text-secondary font-semibold">Included</span>
+</label>
+<!-- Upgrade: Double Portion -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all" data-price-delta="5.50">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="protein-choice" type="radio" value="double-chicken"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-on-surface">Double Korean BBQ Chicken (+80g)</span>
+<span class="bg-secondary-container/60 text-on-secondary-fixed-variant px-2 py-0.5 rounded-full font-label-sm">+28g Protein</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">Extra protein boost for active lifestyles</span>
+</div>
+</div>
+<span class="font-label-lg text-primary font-bold">+ $5.50 AUD</span>
+</label>
+<!-- Swap 1: Lemon Herb -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="protein-choice" type="radio" value="lemon-chicken"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Lemon Herb Grilled Chicken</span>
+<span class="font-body-sm text-on-surface-variant">Zesty Mediterranean style chicken cutlet</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant">Swap free</span>
+</label>
+<!-- Swap 2: Smoky Chipotle Beef -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all" data-price-delta="1.00">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="protein-choice" type="radio" value="chipotle-beef"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Smoky Chipotle Flank Beef</span>
+<span class="font-body-sm text-on-surface-variant">Thinly carved grass-fed beef rump steak</span>
+</div>
+</div>
+<span class="font-label-lg text-primary font-bold">+ $1.00 AUD</span>
+</label>
+<!-- Swap 3: Teriyaki Tofu -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all" data-price-delta="0">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary cursor-pointer custom-radio" name="protein-choice" type="radio" value="crispy-tofu"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-on-surface">Crispy Teriyaki Organic Tofu</span>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full font-label-sm">Vegetarian</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">Golden pressed soy cubes tossed in sweet reduction</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant">Swap free</span>
+</label>
+</div>
+</fieldset>
+<!-- STEP 3: OPTIONAL EXTRAS & ADD-ONS (Multi-select) -->
+<fieldset class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">3</span>
+<legend class="font-headline-sm text-primary">Fresh Extras & Add-ons</legend>
+</div>
+<span class="font-label-sm text-on-surface-variant">Optional (Multiple)</span>
+</div>
+<p class="font-body-sm text-on-surface-variant -mt-2">Boost texture, healthy fats, or extra kick.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<!-- Extra 1: Avocado (Checked by default in prompt) -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-sm">
+<input checked="" class="w-4 h-4 accent-primary rounded cursor-pointer extra-checkbox" data-price="3.00" name="extra-addon" type="checkbox" value="avocado"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-primary font-bold">Sliced Fresh Hass Avocado</span>
+<span class="font-body-sm text-on-surface-variant">Half avocado, sliced daily</span>
+</div>
+</div>
+<span class="font-label-sm text-primary font-bold shrink-0">+ $3.00</span>
+</label>
+<!-- Extra 2: Free Range Egg -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer extra-checkbox" data-price="2.00" name="extra-addon" type="checkbox" value="egg"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Boiled Free-Range Egg</span>
+<span class="font-body-sm text-on-surface-variant">Soft jammy yolk</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+ $2.00</span>
+</label>
+<!-- Extra 3: Pickled Kimchi -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer extra-checkbox" data-price="2.50" name="extra-addon" type="checkbox" value="kimchi"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Pickled Kimchi Boost</span>
+<span class="font-body-sm text-on-surface-variant">House fermented wombok cabbage</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+ $2.50</span>
+</label>
+<!-- Extra 4: Crispy Shallots -->
+<label class="flex items-center justify-between p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<div class="flex items-center gap-space-sm">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer extra-checkbox" data-price="1.50" name="extra-addon" type="checkbox" value="furikake"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Crispy Shallots & Furikake</span>
+<span class="font-body-sm text-on-surface-variant">Nori seaweed crunch mix</span>
+</div>
+</div>
+<span class="font-label-sm text-on-surface-variant shrink-0">+ $1.50</span>
+</label>
+</div>
+</fieldset>
+<!-- STEP 4: SAUCE & DRESSING CHOICE -->
+<fieldset class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">4</span>
+<legend class="font-headline-sm text-primary">Sauce & Dressing</legend>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full font-label-sm uppercase tracking-wider font-semibold">Select 1</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<label class="flex items-start gap-space-sm p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<input checked="" class="w-4 h-4 accent-primary cursor-pointer mt-1" name="sauce-choice" type="radio" value="sesame"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-primary font-bold">Roasted Sesame Dressing</span>
+<span class="font-body-sm text-on-surface-variant">Creamy, fragrant (Served on the side)</span>
+</div>
+</label>
+<label class="flex items-start gap-space-sm p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<input class="w-4 h-4 accent-primary cursor-pointer mt-1" name="sauce-choice" type="radio" value="gochujang"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-on-surface">House Gochujang Kick</span>
+<span class="material-symbols-outlined text-tertiary-container text-[16px]">local_fire_department</span>
+</div>
+<span class="font-body-sm text-on-surface-variant">Medium heat chilli paste & honey</span>
+</div>
+</label>
+<label class="flex items-start gap-space-sm p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<input class="w-4 h-4 accent-primary cursor-pointer mt-1" name="sauce-choice" type="radio" value="sweet-soy"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">Sweet Soy Glaze</span>
+<span class="font-body-sm text-on-surface-variant">Caramelised tamari reduction (Mild)</span>
+</div>
+</label>
+<label class="flex items-start gap-space-sm p-space-md rounded-lg cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all">
+<input class="w-4 h-4 accent-primary cursor-pointer mt-1" name="sauce-choice" type="radio" value="none"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-on-surface">No Sauce</span>
+<span class="font-body-sm text-on-surface-variant">Enjoy fresh unseasoned natural flavours</span>
+</div>
+</label>
+</div>
+</fieldset>
+<!-- STEP 5: INGREDIENT REMOVAL (Dietary Adjustments) -->
+<fieldset class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">5</span>
+<legend class="font-headline-sm text-primary">Ingredient Adjustments</legend>
+</div>
+<span class="font-label-sm text-on-surface-variant">Optional</span>
+</div>
+<p class="font-body-sm text-on-surface-variant -mt-2">Dislike an ingredient? Tell the kitchen to leave it out.</p>
+<div class="flex flex-wrap gap-space-sm">
+<label class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer" name="remove-item" type="checkbox" value="no-cucumber"/>
+<span class="font-label-md text-on-surface">No Cucumber</span>
+</label>
+<label class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer" name="remove-item" type="checkbox" value="no-slaw"/>
+<span class="font-label-md text-on-surface">No Rainbow Slaw</span>
+</label>
+<label class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="w-4 h-4 accent-primary rounded cursor-pointer" name="remove-item" type="checkbox" value="no-sesame"/>
+<span class="font-label-md text-on-surface">No Sesame Seeds</span>
+</label>
+</div>
+</fieldset>
+<!-- STEP 6: SPECIAL INSTRUCTIONS -->
+<div class="p-space-md lg:p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm flex items-center justify-center">6</span>
+<label class="font-headline-sm text-primary" for="kitchen-notes">Special Kitchen Instructions</label>
+</div>
+<p class="font-body-sm text-on-surface-variant">Please note: for severe allergies, please call the store directly before ordering.</p>
+<textarea class="w-full mt-1 p-space-sm rounded-lg bg-surface-container-low text-on-surface font-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-outline" id="kitchen-notes" placeholder="e.g., extra fork, dressing strictly on the side, no cutlery needed..." rows="3"></textarea>
+</div>
+<!-- Beverage Pairing Suggestion (Editorial touch) -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[24px]">local_cafe</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-primary font-bold">Pair with Yuzu Sparkling Brew</span>
+<span class="font-body-sm text-on-surface-variant">Cold-pressed Japanese yuzu with sparkling Victorian spring water.</span>
+</div>
+</div>
+<button class="shrink-0 px-space-md py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-primary font-label-md font-bold shadow-sm transition-colors" type="button">
+            + $5.20 AUD
+          </button>
+</div>
+</section>
+</div>
+</div>
+<!-- Sticky Bottom Summary & Add-to-Cart Action Bar -->
+<aside class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md shadow-xl py-space-sm px-margin-mobile lg:px-margin">
+<div class="max-w-[1280px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-space-sm">
+<!-- Left: Back Navigation & Item State Details -->
+<div class="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-space-md">
+<a class="hidden md:flex items-center gap-1 font-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="menu" href="#">
+<span class="material-symbols-outlined text-[18px]">keyboard_backspace</span>
+<span>Return to full menu</span>
+</a>
+<!-- Quantity Selector -->
+<div class="flex items-center bg-surface-container-low rounded-lg p-1">
+<button aria-label="Decrease quantity" class="w-9 h-9 rounded-md bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-primary transition-colors disabled:opacity-40" id="qty-minus" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-10 text-center font-headline-sm text-primary font-bold" id="qty-display">1</span>
+<button aria-label="Increase quantity" class="w-9 h-9 rounded-md bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-primary transition-colors" id="qty-plus" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<div class="flex flex-col sm:hidden">
+<span class="font-label-sm text-on-surface-variant">Total Price</span>
+<span class="font-headline-sm text-primary font-bold" id="mobile-price-display">$20.90 AUD</span>
+</div>
+</div>
+<!-- Right: Main Add to Bag Call-to-action Button -->
+<div class="flex items-center gap-space-md w-full sm:w-auto justify-end">
+<div class="hidden sm:flex flex-col text-right">
+<span class="font-label-sm text-on-surface-variant uppercase tracking-wider">Subtotal</span>
+<span class="font-headline-md text-primary font-bold" id="desktop-price-display">$20.90 AUD</span>
+</div>
+<button class="w-full sm:w-auto px-space-xl py-3.5 rounded-lg bg-primary text-on-primary font-label-lg font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-space-sm shadow-md active:scale-95" id="btn-add-to-cart" type="button">
+<span class="material-symbols-outlined text-[20px]">shopping_basket</span>
+<span>Add to cart · <span id="btn-price-display">$20.90 AUD</span></span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Interactive State Controller Script -->
+<script>
+    (function initCustomiser() {
+      const BASE_PRICE = 17.90;
+      let quantity = 1;
+
+      const qtyMinusBtn = document.getElementById('qty-minus');
+      const qtyPlusBtn = document.getElementById('qty-plus');
+      const qtyDisplay = document.getElementById('qty-display');
+      const desktopPriceDisplay = document.getElementById('desktop-price-display');
+      const mobilePriceDisplay = document.getElementById('mobile-price-display');
+      const btnPriceDisplay = document.getElementById('btn-price-display');
+      const addToCartBtn = document.getElementById('btn-add-to-cart');
+
+      function calculateUnitPrice() {
+        let price = BASE_PRICE;
+
+        // Check protein delta
+        const selectedProtein = document.querySelector('input[name="protein-choice"]:checked');
+        if (selectedProtein) {
+          const container = selectedProtein.closest('label');
+          if (container && container.dataset.priceDelta) {
+            price += parseFloat(container.dataset.priceDelta);
+          }
+        }
+
+        // Check extras
+        const checkedExtras = document.querySelectorAll('input[name="extra-addon"]:checked');
+        checkedExtras.forEach(item => {
+          if (item.dataset.price) {
+            price += parseFloat(item.dataset.price);
+          }
+        });
+
+        return price;
+      }
+
+      function updateDisplays() {
+        const unitPrice = calculateUnitPrice();
+        const totalPrice = (unitPrice * quantity).toFixed(2);
+        const formatted = '$' + totalPrice + ' AUD';
+
+        if (desktopPriceDisplay) desktopPriceDisplay.textContent = formatted;
+        if (mobilePriceDisplay) mobilePriceDisplay.textContent = formatted;
+        if (btnPriceDisplay) btnPriceDisplay.textContent = formatted;
+        if (qtyDisplay) qtyDisplay.textContent = quantity;
+        if (qtyMinusBtn) qtyMinusBtn.disabled = (quantity <= 1);
+      }
+
+      // Quantity triggers
+      if (qtyMinusBtn) {
+        qtyMinusBtn.addEventListener('click', () => {
+          if (quantity > 1) {
+            quantity -= 1;
+            updateDisplays();
+          }
+        });
+      }
+
+      if (qtyPlusBtn) {
+        qtyPlusBtn.addEventListener('click', () => {
+          quantity += 1;
+          updateDisplays();
+        });
+      }
+
+      // Input changes
+      document.querySelectorAll('input[name="protein-choice"]').forEach(radio => {
+        radio.addEventListener('change', updateDisplays);
+      });
+
+      document.querySelectorAll('input[name="extra-addon"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateDisplays);
+      });
+
+      // Simple Add to Cart Feedback
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => {
+          const originalContent = addToCartBtn.innerHTML;
+          addToCartBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[20px] animate-spin">autorenew</span>
+            <span>Adding to bag...</span>
+          `;
+          addToCartBtn.disabled = true;
+
+          setTimeout(() => {
+            addToCartBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[20px]">check</span>
+              <span>Added to bag!</span>
+            `;
+            setTimeout(() => {
+              addToCartBtn.innerHTML = originalContent;
+              addToCartBtn.disabled = false;
+              updateDisplays();
+            }, 1200);
+          }, 600);
+        });
+      }
+
+      // Run initial calculate
+      updateDisplays();
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low text-on-surface mt-space-xl"><div class="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-space-lg pb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-md"><div class="flex items-center gap-space-sm"><img alt="Gourwest logo.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDwphynppR0fZFqa1lttJRpc5ASogx_cJ97QAHDA0DSARbrYhsTuvbT7rO7mAiBtmjsQhtPzYRS8kPsutG9hTUKc8ucODviTCMQErqwnL3NU1dG8eGwRL1h81zLEctqIAvh6CXZKhqdxv6-eXlk2yCmbn1M19e8VciAij8Mf1FS1LGPtp-NYsQIsNY-r_LMYfQC1fql-SuALyiino6IUxAqDF7w2lTruDq-1ogk4_EtHnzrJsrdkqew4TE"/><span class="font-headline-sm text-primary tracking-tight font-bold">GOURWEST</span></div><p class="font-body-md text-on-surface-variant max-w-sm leading-relaxed">Fresh bowls, bold wraps and flame-grilled favourites—inspired by global kitchens, crafted for your everyday dining. Founded in Melbourne in 2016.</p><div class="flex items-center gap-space-sm pt-space-xs"><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">public</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">chat_bubble</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">photo_camera</span></span><span class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"><span class="material-symbols-outlined text-[18px]">mail</span></span></div></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Menu</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Signature Bowls</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Wraps</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">From the Grill</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Sides & Drinks</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Locations</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Melbourne Central</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Southbank</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Auckland City</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">Singapore Orchard</a></li><li><a class="hover:text-primary transition-colors" data-path="locations" href="#">KLCC</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Gourwest</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Our Story</a></li><li><a class="hover:text-primary transition-colors" data-path="rewards" href="#">Rewards Club</a></li><li><a class="hover:text-primary transition-colors" data-path="catering" href="#">Catering & Events</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Careers</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-headline-sm text-primary">Help & Legal</h4><ul class="flex flex-col gap-space-xs font-body-md text-on-surface-variant"><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Contact Team</a></li><li><a class="hover:text-primary transition-colors" data-path="menu" href="#">Allergen Guide</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Privacy Policy</a></li><li><a class="hover:text-primary transition-colors" data-path="our-story" href="#">Terms of Service</a></li></ul></div></div><div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm"><div class="flex flex-col sm:flex-row items-center gap-space-sm"><div class="flex items-center gap-1 font-label-md text-on-surface bg-surface-container px-space-sm py-1 rounded-lg"><span>🇦🇺</span><span>Australia (AUD)</span></div><p class="text-center sm:text-left">Gourwest is a fictional demonstration restaurant brand. All prices shown in AUD for Australian locations.</p></div><p class="shrink-0">© 2025 Gourwest Pty Ltd. All rights reserved.</p></div></div></footer></body></html>

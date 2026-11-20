@@ -1,0 +1,506 @@
+---
+import Base from '../../layouts/Base.astro';
+import DishCard from '../../components/DishCard.astro';
+import Icon from '../../components/Icon.astro';
+import Faq from '../../components/Faq.astro';
+import Usual from '../../components/Usual.astro';
+import BagRail from '../../components/BagRail.astro';
+import { PICKUP_FAQ, PLANT_FAQ, menuNode } from '../../lib/seo';
+import { CATEGORIES, DIETARY_LABELS, MENU, type Dietary } from '../../data/menu';
+import { formatAUD } from '../../lib/pricing';
+
+const filters: Dietary[] = ['plant-based', 'vegetarian', 'high-protein', 'dairy-free', 'spicy'];
+const sections = CATEGORIES.map((c) => ({ ...c, items: MENU.filter((m) => m.category === c.id) }));
+
+---
+
+<Base title="Menu" description="Order Gourwest bowls, wraps, grill plates, sides and drinks for pickup. Filter by plant-based, vegetarian, high protein, dairy-free or spicy." schema={[menuNode(Astro.site!)]}>
+  <section class="intro">
+    <div class="wrap intro__grid">
+      <div class="intro__copy">
+        <p class="label">Order for pickup</p>
+        <h1>Find your flavour</h1>
+        <p class="lead measure">Made to order at <strong data-store-name>Melbourne Central</strong>. Every bowl is customisable; prices in AUD.</p>
+        <div class="search">
+          <Icon name="search" size={20} />
+          <label class="visually-hidden" for="menu-search">Search the menu</label>
+          <input id="menu-search" class="input" type="search" placeholder="Search dishes or ingredients" autocomplete="off" data-search />
+        </div>
+        <Usual />
+      </div>
+      <img class="intro__img" src="/images/food/spread-1200.webp" srcset="/images/food/spread-640.webp 640w, /images/food/spread-1200.webp 1200w" sizes="(min-width: 960px) 520px, 100vw" width="1408" height="768" alt="Overhead spread of Gourwest bowls, fries and dipping sauces on a linen tablecloth" loading="lazy" decoding="async" />
+    </div>
+  </section>
+
+  <div class="toolbar follows-header" data-toolbar>
+    <div class="wrap toolbar__inner">
+      <nav class="cats" aria-label="Menu sections" data-cats>
+        {sections.map((s) => <a class="chip" href={`#${s.id}`} data-cat={s.id}>{s.title}</a>)}
+      </nav>
+      <button class="chip filters-btn" type="button" popovertarget="diet-filters" data-filters-btn>
+        Filters <span class="filters-btn__count num" hidden data-filter-count></span>
+      </button>
+      {/* Phones: the concierge lives in the sticky toolbar, because a floating button would sit on the rows' Add buttons. */}
+      <button class="chip ask-btn" type="button" data-open-concierge="" aria-label="Ask the menu concierge">
+        <Icon name="sparkles" size={18} />
+      </button>
+      {/* One set of chips: inline on wide screens, a bottom sheet behind "Filters" on phones and tablets. */}
+      <div id="diet-filters" class="diets" popover role="group" aria-labelledby="diet-filters-title">
+        <p class="diets__title" id="diet-filters-title">Dietary filters</p>
+        <div class="diets__chips">
+          {filters.map((f) => <button class="chip" type="button" aria-pressed="false" data-diet={f}>{DIETARY_LABELS[f]}</button>)}
+        </div>
+        <button class="btn btn--lg btn--block diets__done" type="button" popovertarget="diet-filters" popovertargetaction="hide" data-filter-done>
+          Show dishes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap menu-layout">
+    <div class="menu-main">
+      <p class="allergy small">
+        <Icon name="triangle-alert" size={16} />
+        <span>
+          <strong>Allergies?</strong> Kitchens share equipment, so nothing is certified allergen-free, halal or gluten-free. Severe allergy? Call the
+          kitchen first. <a href="/allergens/">Allergen guide</a>
+        </span>
+      </p>
+
+      <p class="results small muted" role="status" aria-live="polite" data-results></p>
+
+      {
+        sections.map((s, si) => (
+          <section class="menu-section" id={s.id} aria-labelledby={`${s.id}-title`} data-section>
+            <div class="menu-section__head">
+              <h2 id={`${s.id}-title`}>{s.title}</h2>
+              <p class="muted small">{s.kicker}</p>
+            </div>
+            {s.id === 'drinks' ? (
+              <ul class="drinks" role="list">
+                {s.items.map((d) => (
+                  <li class="drink" data-dish={d.slug} data-dietary={d.dietary.join(' ')}>
+                    <div>
+                      <h3>{d.name}</h3>
+                      <p class="small muted">{d.blurb}</p>
+                    </div>
+                    <span class="num drink__price">{formatAUD(d.price)}</span>
+                    <button class="btn btn--quiet" type="button" data-quick-add={d.slug} aria-label={`Add ${d.name} to bag`}>
+                      <Icon name="plus" size={16} /> Add
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div class="dish-grid">
+                {s.items.map((item, i) => (
+                  <DishCard item={item} eager={si === 0 && i < 3} />
+                ))}
+              </div>
+            )}
+          </section>
+        ))
+      }
+
+      <div class="empty panel" hidden data-empty>
+        <h2>No dishes match those filters</h2>
+        <p class="muted">Try removing a filter, or ask the concierge for something close.</p>
+        <button class="btn btn--ghost" type="button" data-clear>Clear filters</button>
+      </div>
+    </div>
+    <BagRail />
+  </div>
+
+  <a class="bag-bar" href="/cart/" data-bag-bar hidden>
+    <span class="bag-bar__count num" data-cart-count>0</span>
+    <span>View bag</span>
+    <span class="num" data-cart-total>$0.00</span>
+  </a>
+  <Faq faqs={[PLANT_FAQ, PICKUP_FAQ]} tint />
+</Base>
+
+<script>
+  import { cartSummary, EVENT } from '../../scripts/state';
+
+  const search = document.querySelector<HTMLInputElement>('[data-search]')!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-diet]')];
+  const dishes = [...document.querySelectorAll<HTMLElement>('[data-dish]')];
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  const empty = document.querySelector<HTMLElement>('[data-empty]')!;
+  const results = document.querySelector<HTMLElement>('[data-results]')!;
+  const filtersBtn = document.querySelector<HTMLButtonElement>('[data-filters-btn]')!;
+  const filterCount = document.querySelector<HTMLElement>('[data-filter-count]')!;
+  const filterDone = document.querySelector<HTMLButtonElement>('[data-filter-done]')!;
+
+  function apply() {
+    const q = search.value.trim().toLowerCase();
+    const diets = chips.filter((c) => c.getAttribute('aria-pressed') === 'true').map((c) => c.dataset.diet!);
+    let shown = 0;
+    for (const dish of dishes) {
+      const tags = (dish.dataset.dietary ?? '').split(' ');
+      const text = dish.textContent!.toLowerCase();
+      const ok = diets.every((d) => tags.includes(d)) && (!q || text.includes(q));
+      dish.closest<HTMLElement>('li.drink, article')!.hidden = !ok;
+      if (ok) shown++;
+    }
+    for (const section of sections) section.hidden = !section.querySelector('[data-dish]:not([hidden])');
+    empty.hidden = shown > 0;
+    results.textContent = q || diets.length ? `${shown} dish${shown === 1 ? '' : 'es'} match` : '';
+    filterCount.hidden = diets.length === 0;
+    filterCount.textContent = String(diets.length);
+    filtersBtn.setAttribute('aria-label', diets.length ? `Filters, ${diets.length} on` : 'Filters');
+    filterDone.textContent = shown ? `Show ${shown} dish${shown === 1 ? '' : 'es'}` : 'No dishes match: clear a filter';
+  }
+
+  chips.forEach((chip) =>
+    chip.addEventListener('click', () => {
+      chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+      apply();
+    }),
+  );
+  search.addEventListener('input', apply);
+  document.querySelector('[data-clear]')!.addEventListener('click', () => {
+    chips.forEach((c) => c.setAttribute('aria-pressed', 'false'));
+    search.value = '';
+    apply();
+  });
+
+  // Scroll-spy: the chip for the section under the toolbar lights up and stays in view in its scroller.
+  const cats = document.querySelector<HTMLElement>('[data-cats]')!;
+  const catChips = new Map([...cats.querySelectorAll<HTMLAnchorElement>('[data-cat]')].map((a) => [a.dataset.cat!, a]));
+  const spy = new IntersectionObserver(
+    (entries) => {
+      const hit = entries.find((e) => e.isIntersecting);
+      if (!hit) return;
+      catChips.forEach((chip, id) => chip.setAttribute('aria-current', String(id === hit.target.id)));
+      const chip = catChips.get(hit.target.id)!;
+      cats.scrollTo({ left: chip.offsetLeft - cats.offsetLeft - 16, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    },
+    { rootMargin: '-35% 0px -60% 0px' },
+  );
+  sections.forEach((section) => spy.observe(section));
+
+  const bar = document.querySelector<HTMLElement>('[data-bag-bar]')!;
+  const syncBar = () => (bar.hidden = cartSummary().count === 0);
+  window.addEventListener(EVENT, syncBar);
+  syncBar();
+</script>
+
+<style>
+  .intro {
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+  .intro__grid {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+  @media (min-width: 960px) {
+    .intro__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 32rem);
+    }
+    /* Below 960px the dishes matter more than the mood photo. */
+    .intro__img {
+      display: block;
+    }
+  }
+  .intro__copy {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .intro__img {
+    display: none;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--r-2);
+    box-shadow: var(--shadow-2);
+  }
+  .search {
+    position: relative;
+    max-width: 34rem;
+  }
+  .search :global(svg) {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    translate: 0 -50%;
+    color: var(--fg-3);
+    pointer-events: none;
+  }
+  .search .input {
+    padding-left: 2.75rem;
+    min-height: 52px;
+    border-radius: var(--r-pill);
+  }
+  @media (max-width: 639px) {
+    /* Phones: the first frame goes to dishes, so the intro keeps only the title, the kitchen and search. */
+    .intro {
+      padding-block: var(--s-4) var(--s-5);
+    }
+    .intro .label {
+      display: none;
+    }
+    .intro .lead {
+      font-size: var(--step-0);
+    }
+  }
+  .toolbar {
+    position: sticky;
+    top: 112px;
+    z-index: 20;
+    padding-block: var(--s-2);
+    background: color-mix(in oklch, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-block: 1px solid var(--line);
+  }
+  .toolbar__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .cats {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: var(--s-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: 2px;
+  }
+  .cats .chip {
+    text-decoration: none;
+    background: var(--surface-2);
+  }
+  .cats .chip[aria-current='true'] {
+    background: var(--forest);
+  }
+  .ask-btn {
+    flex: none;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    color: var(--gold);
+  }
+  @media (min-width: 640px) {
+    .ask-btn {
+      display: none;
+    }
+  }
+  .filters-btn {
+    flex: none;
+  }
+  .filters-btn__count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: var(--r-pill);
+    background: var(--forest);
+    color: var(--on-forest);
+    font-size: 0.8125rem;
+  }
+  .filters-btn__count[hidden] {
+    display: none;
+  }
+  /* Phones and tablets: dietary filters live in a bottom sheet. */
+  .diets {
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: var(--s-5) var(--gutter) calc(var(--s-5) + env(safe-area-inset-bottom));
+    border: 0;
+    border-radius: var(--r-2) var(--r-2) 0 0;
+    background: var(--surface);
+    color: var(--fg);
+    box-shadow: var(--shadow-3);
+  }
+  .diets:popover-open {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .diets::backdrop {
+    background: oklch(0.2 0.02 168 / 0.45);
+  }
+  .diets__title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 600;
+    color: var(--forest-deep);
+  }
+  .diets__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .diets {
+      transition: translate var(--t-ui) var(--ease-in), opacity var(--t-ui) var(--ease-in), overlay var(--t-ui) allow-discrete,
+        display var(--t-ui) allow-discrete;
+      translate: 0 2rem;
+      opacity: 0;
+    }
+    .diets:popover-open {
+      translate: 0 0;
+      opacity: 1;
+      transition-timing-function: var(--ease-out);
+    }
+    @starting-style {
+      .diets:popover-open {
+        translate: 0 2rem;
+        opacity: 0;
+      }
+    }
+  }
+  @media (min-width: 1100px) {
+    .filters-btn,
+    .diets__title,
+    .diets__done {
+      display: none;
+    }
+    /* Wide screens: the same chips sit inline in the toolbar (author display beats the closed-popover UA rule). */
+    .diets,
+    .diets:popover-open {
+      position: static;
+      display: flex;
+      flex: none;
+      inset: auto;
+      width: auto;
+      padding: 2px 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      translate: none;
+      opacity: 1;
+      overflow: visible;
+    }
+  }
+  .menu-layout {
+    display: grid;
+    gap: var(--s-6);
+  }
+  .menu-main {
+    min-width: 0;
+  }
+  @media (min-width: 1100px) {
+    .menu-layout {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      align-items: start;
+      gap: var(--s-6);
+    }
+    /* Beside the bag, slightly narrower cards keep three dishes to a row at laptop widths. */
+    .menu-main :global(.dish-grid) {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 14.5rem), 1fr));
+    }
+  }
+  .allergy {
+    display: flex;
+    gap: var(--s-2);
+    margin-top: var(--s-4);
+    color: var(--fg-2);
+    text-wrap: pretty;
+  }
+  .allergy :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--gold);
+  }
+  .allergy strong {
+    color: var(--fg);
+  }
+  .allergy a {
+    font-weight: 700;
+  }
+  .results {
+    min-height: 1.5em;
+    margin-top: var(--s-4);
+  }
+  .menu-section {
+    padding-top: var(--s-6);
+    scroll-margin-top: 13rem;
+  }
+  .menu-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-4);
+    margin-bottom: var(--s-5);
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .drinks {
+    display: grid;
+    gap: var(--s-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    margin: 0;
+    padding: 0;
+  }
+  .drink {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-4) var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2);
+    background: var(--surface);
+  }
+  .drink h3 {
+    font-size: 1.1rem;
+  }
+  .drink__price {
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .empty {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+    margin-top: var(--s-6);
+  }
+  .bag-bar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+    z-index: 55;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 52px;
+    padding: 0 var(--s-5) 0 var(--s-3);
+    translate: -50% 0;
+    border-radius: var(--r-pill);
+    background: var(--gold-bright);
+    color: oklch(0.2 0.03 80);
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: var(--shadow-3);
+  }
+  .bag-bar__count {
+    display: grid;
+    place-items: center;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--forest-deep);
+    color: var(--on-forest);
+  }
+  @media (min-width: 1100px) {
+    .bag-bar {
+      display: none;
+    }
+  }
+  :global(body:has(.bag-bar:not([hidden])) .toast) {
+    bottom: calc(9.5rem + env(safe-area-inset-bottom));
+  }
+  @media (max-width: 639px) {
+    .bag-bar {
+      left: var(--s-4);
+      right: var(--s-4);
+      translate: none;
+      justify-content: space-between;
+    }
+  }
+</style>

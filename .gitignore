@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+!.env.production
+design-audit/
+coverage/
+*.log
+.DS_Store
+Thumbs.db

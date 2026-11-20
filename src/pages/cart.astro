@@ -1,0 +1,421 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Turnstile from '../components/Turnstile.astro';
+import Usual from '../components/Usual.astro';
+import { STORES } from '../data/stores';
+import { POINTS_PER_DOLLAR } from '../lib/pricing';
+---
+
+<Base title="Your bag" description="Review your Gourwest order and check out for pickup." noindex>
+  <div class="wrap page">
+    <header class="page__head">
+      <p class="label">Checkout</p>
+      <h1>Your bag</h1>
+    </header>
+
+    <div class="empty panel" hidden data-empty>
+      <Icon name="shopping-bag" size={32} />
+      <h2>Your bag is empty</h2>
+      <p class="muted">Pick a bowl, wrap or plate to get started — or ask the concierge what to try.</p>
+      <a class="btn btn--lg" href="/menu/">Browse the menu</a>
+      <Usual />
+    </div>
+
+    <div class="layout" data-filled hidden>
+      <section aria-labelledby="lines-title">
+        <h2 id="lines-title" class="visually-hidden">Items</h2>
+        <ul class="lines" role="list" data-lines></ul>
+        <a class="link-arrow" href="/menu/"><Icon name="plus" /> Add more</a>
+      </section>
+
+      <form class="checkout panel" data-checkout novalidate>
+        <h2>Pickup details</h2>
+
+        <div class="field">
+          <label for="store">Kitchen</label>
+          <select id="store" class="select" name="storeId" required>
+            {STORES.map((s) => <option value={s.id}>{s.name}, {s.city}</option>)}
+          </select>
+          <p class="hint" data-ready-time>Ready in about 15 minutes.</p>
+        </div>
+
+        <div class="field">
+          <label for="pickup-name">Name for the pickup shelf</label>
+          <input id="pickup-name" class="input" name="pickupName" maxlength="40" autocomplete="given-name" required aria-describedby="pickup-name-error" />
+          <p class="error" id="pickup-name-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="member">Gourwest Club number <span class="muted">(optional)</span></label>
+          <input id="member" class="input" name="memberNumber" maxlength="10" placeholder="GW-AU-1006" autocomplete="off" spellcheck="false" aria-describedby="member-hint member-error" />
+          <p class="hint" id="member-hint">Earn {POINTS_PER_DOLLAR} points per $1. Demo members: GW-AU-1006, GW-AU-1005, GW-NZ-1007.</p>
+          <p class="error" id="member-error" hidden></p>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="website">Leave this empty</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <dl class="totals">
+          <div>
+            <dt>Subtotal</dt>
+            <dd class="num" data-subtotal>$0.00</dd>
+          </div>
+          <div>
+            <dt>Club points to earn</dt>
+            <dd class="num">
+              <span data-points>0</span>
+              <span class="nudge" data-nudge hidden></span>
+            </dd>
+          </div>
+          <div class="totals__grand">
+            <dt>Pay at pickup</dt>
+            <dd class="num" data-total>$0.00</dd>
+          </div>
+        </dl>
+
+        <p class="notice notice--bad" role="alert" hidden data-error></p>
+
+        <Turnstile />
+
+        <button class="btn btn--lg btn--block" type="submit" data-submit>
+          <span data-submit-label>Place pickup order</span>
+        </button>
+        <p class="small muted fine">
+          Demo simulator: no payment is taken and the order is sent to Luminara CRM as synthetic data. By ordering you accept the <a href="/terms/">terms</a>.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <template data-line-template>
+    <li class="line">
+      <div class="line__main">
+        <a class="line__name"></a>
+        <p class="line__summary small muted"></p>
+        <p class="line__note small"></p>
+      </div>
+      <div class="line__qty" role="group">
+        <button class="icon-btn" type="button" data-step="-1"><Icon name="minus" size={16} /></button>
+        <span class="num line__count"></span>
+        <button class="icon-btn" type="button" data-step="1"><Icon name="plus" size={16} /></button>
+      </div>
+      <span class="line__total num"></span>
+    </li>
+  </template>
+</Base>
+
+<script>
+  import { CartError, POINTS_PER_DOLLAR, formatAUD, priceCart } from '../lib/pricing';
+  import { RULES } from '../lib/rules';
+  import { isOpen } from '../data/stores';
+  import { EVENT, clearCart, clubBalance, getCart, getStore, safeSession, saveLastOrder, saveUsual, setQty, setStore } from '../scripts/state';
+  import { tierFor, tierProgress } from '../data/club';
+
+  const CHECKOUT_KEY = 'gourwest:checkout-id';
+  const $ = <T extends Element>(sel: string) => document.querySelector<T>(sel)!;
+  const linesEl = $<HTMLUListElement>('[data-lines]');
+  const tpl = $<HTMLTemplateElement>('[data-line-template]');
+  const form = $<HTMLFormElement>('[data-checkout]');
+  const storeSelect = $<HTMLSelectElement>('#store');
+  const errorBox = $<HTMLElement>('[data-error]');
+  const submit = $<HTMLButtonElement>('[data-submit]');
+  const submitLabel = $<HTMLElement>('[data-submit-label]');
+  const memberInput = $<HTMLInputElement>('#member');
+  const nudge = $<HTMLElement>('[data-nudge]');
+  let pointsToEarn = 0;
+
+  /** Tier nudge from the balance this device got back with its last order under the same member number. */
+  function renderNudge() {
+    const balance = clubBalance(memberInput.value.trim().toUpperCase());
+    let text = '';
+    if (balance !== null) {
+      const after = tierProgress(balance + pointsToEarn);
+      if (after.tier !== tierFor(balance)) text = `This order takes you to ${after.tier.name}`;
+      else if (after.next) text = `${after.toNext.toLocaleString('en-AU')} pts to ${after.next.name} after this order`;
+    }
+    nudge.textContent = text;
+    nudge.hidden = !text;
+  }
+
+  function render() {
+    const lines = getCart();
+    $<HTMLElement>('[data-empty]').hidden = lines.length > 0;
+    $<HTMLElement>('[data-filled]').hidden = lines.length === 0;
+    linesEl.replaceChildren(
+      ...lines.map((line, index) => {
+        const li = tpl.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+        const name = li.querySelector<HTMLAnchorElement>('.line__name')!;
+        name.textContent = line.name;
+        name.href = `/menu/${line.slug}/`;
+        li.querySelector('.line__summary')!.textContent = line.summary.join(' · ');
+        li.querySelector('.line__note')!.textContent = line.note ? `“${line.note}”` : '';
+        li.querySelector('.line__count')!.textContent = String(line.qty);
+        li.querySelector('.line__total')!.textContent = formatAUD(line.total);
+        li.querySelector('[role="group"]')!.setAttribute('aria-label', `Quantity of ${line.name}`);
+        li.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((btn) => {
+          const step = Number(btn.dataset.step);
+          btn.setAttribute('aria-label', step < 0 ? (line.qty === 1 ? `Remove ${line.name}` : `One less ${line.name}`) : `One more ${line.name}`);
+          btn.disabled = step > 0 && line.qty >= 20;
+          btn.addEventListener('click', () => setQty(index, line.qty + step));
+        });
+        return li;
+      }),
+    );
+    if (lines.length) {
+      const subtotal = lines.reduce((sum, line) => sum + line.total, 0);
+      $('[data-subtotal]').textContent = formatAUD(subtotal);
+      $('[data-total]').textContent = formatAUD(subtotal);
+      pointsToEarn = Math.floor((subtotal * POINTS_PER_DOLLAR) / 100);
+      $('[data-points]').textContent = pointsToEarn.toLocaleString('en-AU');
+      renderNudge();
+      try {
+        priceCart(lines);
+        submit.disabled = false;
+        if (errorBox.dataset.kind === 'cart') errorBox.hidden = true;
+      } catch (error) {
+        if (!(error instanceof CartError)) throw error;
+        showError(error.message, 'cart');
+        submit.disabled = true;
+      }
+    }
+    const store = getStore();
+    storeSelect.value = store.id;
+    $('[data-ready-time]').textContent = isOpen(store)
+      ? `Ready in about ${store.prepMinutes} minutes after you order.`
+      : `${store.name} is closed right now. In this demo your order is still sent to the CRM.`;
+  }
+
+  function showError(message: string, kind: 'cart' | 'send') {
+    // Turnstile tokens are single-use: get a fresh one after any failed send.
+    if (kind === 'send') (window as Window & { turnstile?: { reset(): void } }).turnstile?.reset();
+    errorBox.dataset.kind = kind;
+    errorBox.textContent = message;
+    errorBox.hidden = false;
+  }
+
+  storeSelect.addEventListener('change', () => setStore(storeSelect.value));
+
+  function fieldError(input: HTMLInputElement, message: string) {
+    const box = document.getElementById(`${input.id}-error`)!;
+    box.textContent = message;
+    box.hidden = !message;
+    input.setAttribute('aria-invalid', String(Boolean(message)));
+  }
+
+  const nameInput = $<HTMLInputElement>('#pickup-name');
+  const validateName = () => fieldError(nameInput, RULES.pickupName(nameInput.value));
+  const validateMember = () => {
+    memberInput.value = memberInput.value.trim().toUpperCase();
+    fieldError(memberInput, RULES.memberNumber(memberInput.value));
+  };
+  nameInput.addEventListener('blur', validateName);
+  memberInput.addEventListener('blur', validateMember);
+  memberInput.addEventListener('input', renderNudge);
+
+  function checkoutId(): string {
+    const session = safeSession();
+    const existing = session?.getItem(CHECKOUT_KEY);
+    if (existing) return existing;
+    const id = crypto.randomUUID();
+    session?.setItem(CHECKOUT_KEY, id);
+    return id;
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    validateName();
+    validateMember();
+    const invalid = form.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+    if (invalid) {
+      invalid.focus();
+      return;
+    }
+    errorBox.hidden = true;
+    submit.disabled = true;
+    submitLabel.textContent = 'Sending to the kitchen…';
+
+    const data = new FormData(form);
+    // One snapshot for the request and for "Your usual", so another tab can't change what gets saved.
+    const lines = getCart();
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          checkoutId: checkoutId(),
+          storeId: data.get('storeId'),
+          pickupName: data.get('pickupName'),
+          memberNumber: data.get('memberNumber'),
+          website: data.get('website'),
+          turnstileToken: data.get('cf-turnstile-response'),
+          lines: lines.map(({ slug, qty, choices, note }) => ({ slug, qty, choices, note })),
+        }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) {
+        const err = body?.error ?? {};
+        // Every failure means nothing was taken, except a send still in flight: keep its id so a resend replays it.
+        if (err.code !== 'in_progress') safeSession()?.removeItem(CHECKOUT_KEY);
+        showError(err.message ?? 'We could not place your order. Please try again.', 'send');
+        submit.disabled = false;
+        submitLabel.textContent = 'Place pickup order';
+        return;
+      }
+      saveLastOrder(body);
+      if (lines.length) saveUsual(lines);
+      safeSession()?.removeItem(CHECKOUT_KEY);
+      clearCart();
+      location.href = '/order/confirmed/';
+    } catch {
+      // No response: the order may have arrived, so the checkout id is kept and a resend replays it instead.
+      showError('We lost the connection while sending. Try again — if your order already arrived, it won’t be sent twice.', 'send');
+      submit.disabled = false;
+      submitLabel.textContent = 'Place pickup order';
+    }
+  });
+
+  window.addEventListener(EVENT, render);
+  render();
+</script>
+
+<style>
+  /* The bag renders client-side; reserving the viewport keeps the footer from jumping when it appears. */
+  .page {
+    min-height: 100dvh;
+    padding-block: clamp(2rem, 5vw, 3.5rem) var(--s-8);
+  }
+  .page__head {
+    margin-bottom: var(--s-6);
+  }
+  .empty {
+    display: grid;
+    justify-items: start;
+    gap: var(--s-4);
+    max-width: 36rem;
+  }
+  .empty > :global(svg) {
+    color: var(--gold);
+  }
+  .layout {
+    display: grid;
+    gap: var(--s-6);
+    align-items: start;
+  }
+  @media (min-width: 960px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    }
+    .checkout {
+      position: sticky;
+      top: 128px;
+    }
+  }
+  .lines {
+    display: grid;
+    margin: 0 0 var(--s-4);
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .lines :global(.line) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'main total' 'qty qty';
+    gap: var(--s-3) var(--s-4);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 640px) {
+    .lines :global(.line) {
+      grid-template-columns: minmax(0, 1fr) auto 6rem;
+      grid-template-areas: 'main qty total';
+      align-items: center;
+    }
+  }
+  .lines :global(.line__main) {
+    grid-area: main;
+    display: grid;
+    gap: var(--s-1);
+  }
+  .lines :global(.line__name) {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--forest-deep);
+    text-decoration: none;
+  }
+  .lines :global(.line__name:hover) {
+    text-decoration: underline;
+  }
+  .lines :global(.line__note) {
+    font-style: italic;
+  }
+  .lines :global(.line__qty) {
+    grid-area: qty;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+  }
+  .lines :global(.line__count) {
+    min-width: 2ch;
+    text-align: center;
+    font-weight: 700;
+  }
+  .lines :global(.line__total) {
+    grid-area: total;
+    text-align: right;
+    font-weight: 700;
+  }
+  .checkout {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .checkout h2 {
+    font-size: var(--step-2);
+  }
+  .totals {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  .totals div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .totals dt {
+    color: var(--fg-2);
+    white-space: nowrap;
+  }
+  .totals dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+  }
+  .nudge {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--forest-deep);
+  }
+  .totals__grand {
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--line);
+  }
+  .totals__grand dt,
+  .totals__grand dd {
+    font-size: var(--step-1);
+    font-weight: 700;
+    color: var(--forest-deep);
+  }
+  .checkout [data-error] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fine a {
+    color: inherit;
+  }
+</style>
