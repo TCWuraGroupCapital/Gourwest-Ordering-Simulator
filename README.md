@@ -1,131 +1,189 @@
-# Gourwest — ordering website
+<div align="center">
 
-The customer-facing ordering site for **Gourwest** (a fictional fast-casual brand), wired into **Luminara CRM**.
-Guests browse the menu, customise a bowl, check out for pickup with an optional Gourwest Club number, and the
-order lands in the CRM as a signed `online_order.completed` event that updates the member's points and tier live.
+<img src="public/brand/gourwest-mark.webp" width="88" height="88" alt="Gourwest globe mark" />
 
-> **Demo simulator — synthetic data.** No payments are taken. Menu, prices, kitchens and history are demo content.
-> The CRM contract this site implements is `Luminara-CRM/docs/gourwest-ordering-simulator-spec.md`.
+# Gourwest Ordering Site
 
-## Use this as a template
+**A production-grade restaurant ordering site you can clone and make your own.**<br />
+Menu, bowl customiser, pickup checkout, loyalty tiers and an AI menu concierge, built with Astro and Cloudflare Pages Functions.
 
-A complete, tested ordering site you can clone and rebrand: Astro 7 static pages, Cloudflare Pages Functions,
-a menu-driven data model, a customiser, checkout, loyalty tiers, an AI menu concierge and a strict CSP.
+[![CI](https://github.com/TCWuraGroupCapital/Gourwest-Ordering-Simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/TCWuraGroupCapital/Gourwest-Ordering-Simulator/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-173e32.svg)](LICENSE)
+![Astro 7](https://img.shields.io/badge/Astro-7-173e32?logo=astro&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-173e32?logo=typescript&logoColor=white)
+![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages%20%2B%20Functions-173e32?logo=cloudflare&logoColor=white)
 
-```powershell
+[Quick start](#quick-start) · [Screenshots](#screenshots) · [Features](#features) · [Make it yours](#make-it-yours) · [Architecture](#architecture) · [Deploy](docs/DEPLOYMENT.md)
+
+</div>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/home-desktop-dark.jpg" />
+  <img src="docs/screenshots/home-desktop.jpg" alt="Gourwest home page: a hero headline 'Global flavours. Your local favourite.' beside a photo of the Seoul BBQ Chicken Bowl with an Add button" />
+</picture>
+
+> [!NOTE]
+> **Gourwest is a fictional brand.** Menu, prices, kitchens and loyalty members are demo data, and no payments are
+> taken. The whole site ships with `X-Robots-Tag: noindex` so a clone never shows up in search by accident.
+
+## Quick start
+
+Requires **Node 22.23.4+**.
+
+```bash
 git clone https://github.com/TCWuraGroupCapital/Gourwest-Ordering-Simulator.git
 cd Gourwest-Ordering-Simulator
 npm ci
-npm run dev        # http://localhost:4321
+npm run dev        # UI only → http://localhost:4321
 ```
 
-- **Rebrand:** `src/styles/tokens.css` (colour, type, spacing), `public/brand/`, and the design system in
-  `design/warm_editorial_hospitality/DESIGN.md`.
-- **Your menu and kitchens:** `src/data/menu.ts` (prices in cents) and `src/data/stores.ts`; photos go in
-  `public/images/food/` as `<name>-640.webp` and `<name>-1200.webp`.
-- **Your back office:** `functions/_lib/crm.ts` posts HMAC-signed JSON events to any HTTPS endpoint that implements
-  the webhook contract below; swap it for your own POS or CRM.
-- **Deploy:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) (create your own KV namespace and Turnstile widget; set `SITE_URL`).
+For the full site with its API routes in the Cloudflare runtime:
 
-The UI works with no configuration. Checkout needs `ORDERS_KV` plus a CRM endpoint (`npm run preview` simulates KV locally).
+```bash
+cp .dev.vars.example .dev.vars   # Windows: copy .dev.vars.example .dev.vars
+npm run preview                  # site + functions → http://localhost:8788
+```
 
-## What's in it
+No keys are needed to browse, customise and fill the bag. The concierge answers from a built-in recommender until
+you add an AI key, and checkout needs a back-office endpoint (see [Make it yours](#make-it-yours)).
 
-| Area | Pages / endpoints |
+## Screenshots
+
+| Menu | Customiser |
 | --- | --- |
-| Ordering | `/` (3D kitchen globe), `/menu/`, `/menu/<dish>/` customiser, `/cart/` checkout, `/order/confirmed/` |
-| Brand | `/our-story/`, `/locations/` (globe + hours), `/rewards/` (tiers + points calculator), `/catering/` |
-| Help & legal | `/contact/`, `/allergens/` (matrix generated from the menu data), `/privacy/`, `/terms/`, 404 |
-| AI | Menu concierge on every page — Groq (`openai/gpt-oss-120b`), then NVIDIA NIM, then a built-in, menu-grounded fallback; it sees the bag and the kitchen's local time to round out the meal, and its picks go into the bag with one "Add all" tap |
-| Reorder | "Your usual" on the menu and empty bag: the last order's dishes (no name, member number or note) back in the bag in one tap, with Forget |
-| Search & AI answers | One linked JSON-LD `@graph` per page (`src/lib/seo.ts`: WebSite, Organization, Restaurant, Menu/MenuItem, BreadcrumbList), visible answer-first FAQs with FAQPage markup (`Faq.astro`, generated from the menu, kitchen and Club data), `/llms.txt`. The whole site is `X-Robots-Tag: noindex` and Restaurant markup gives cities only, so the fictional kitchens never surface in search as real venues at real addresses |
-| API (Cloudflare Pages Functions) | `POST /api/orders`, `POST /api/enquiries`, `POST /api/concierge`, `GET /api/health` |
+| <img src="docs/screenshots/menu-desktop.jpg" alt="Menu page with search, category chips, dietary filters and dish cards" /> | <img src="docs/screenshots/customise-desktop.jpg" alt="Bowl customiser with numbered steps for base, protein and extras, and a sticky Add to bag bar" /> |
+| **AI menu concierge** | **Bag and pickup checkout** |
+| <img src="docs/screenshots/concierge-desktop.jpg" alt="Concierge panel answering 'Vegan and filling, under $18' with two dish cards and Add buttons" /> | <img src="docs/screenshots/cart-desktop.jpg" alt="Bag with four items, quantity steppers and a pickup details form with kitchen, name and Club number" /> |
+| **Loyalty tiers** | **Allergen matrix** |
+| <img src="docs/screenshots/rewards-desktop.jpg" alt="Gourwest Club page with Bronze, Silver, Gold and Platinum tier cards" /> | <img src="docs/screenshots/allergens-desktop.jpg" alt="Allergen guide table generated from the menu data" /> |
+
+<details>
+<summary><strong>Mobile</strong> (390 × 844)</summary>
+<br />
+
+| Home | Menu | Customiser | Bag |
+| --- | --- | --- | --- |
+| <img src="docs/screenshots/home-mobile.jpg" width="200" alt="Home page on a phone" /> | <img src="docs/screenshots/menu-mobile.jpg" width="200" alt="Menu on a phone with dish rows and a Filters button" /> | <img src="docs/screenshots/customise-mobile.jpg" width="200" alt="Customiser on a phone with two extras ticked and the total at $22.90" /> | <img src="docs/screenshots/cart-mobile.jpg" width="200" alt="Bag on a phone with four items" /> |
+
+</details>
+
+## Features
+
+**Ordering**
+- Menu with search, category chips and dietary filters, driven by one data file
+- Step-by-step customiser (base, protein, extras, sauce) with live pricing and a sticky "Add to bag" bar
+- Bag that persists across pages and tabs, a pickup checkout, and a pickup tracker with a header countdown
+- "Your usual": one-tap reorder of the last order, stored on the device without personal details
+
+**Loyalty and AI**
+- Four-tier loyalty club with a points calculator and a tier-progress nudge at checkout
+- Menu concierge: Groq first, NVIDIA NIM as fallback, then a built-in recommender, so it always answers. It sees
+  the bag and the kitchen's local time, and its picks go into the bag with one "Add all" tap
+
+**Brand and content**
+- 3D kitchen globe (three.js), five demo kitchens with local opening hours, our story, catering and contact pages
+- Allergen matrix generated from the menu, so it can't drift from the recipes
+- Light and dark themes, responsive layouts, reduced-motion support
+
+**Engineering**
+- Server re-prices every order; client totals are ignored
+- HMAC-SHA256 signed webhooks, idempotent checkout and a KV outbox that keeps taking orders through back-office outages
+- Strict CSP with build-time script hashes, Turnstile bot checks, same-origin and honeypot guards
+- JSON-LD `@graph` per page, answer-first FAQs, sitemap and `/llms.txt`
+- Type-checked end to end, with Vitest suites and a CI pipeline that deploys to Cloudflare Pages
+
+## Make it yours
+
+| To change | Edit |
+| --- | --- |
+| Colours, type, spacing | `src/styles/tokens.css` (design rationale in `design/warm_editorial_hospitality/DESIGN.md`) |
+| Logo, app icons, share image | `public/brand/` and `public/favicon*` |
+| UI icon set (Lucide) | `NAMES` in `scripts/build-icons.mjs`, then `node scripts/build-icons.mjs` |
+| Dishes, options and prices (cents) | `src/data/menu.ts` |
+| Food photos | `public/images/food/<name>-640.webp` and `<name>-1200.webp` |
+| Kitchens, addresses, hours | `src/data/stores.ts` |
+| Loyalty tiers | `src/data/club.ts` |
+| Where orders go | `functions/_lib/crm.ts` (any HTTPS endpoint that accepts the signed events below) |
+
+The menu file drives the pages, the bag, the server-side price check, the allergen matrix, the concierge prompt and
+the structured data, so one edit updates all of them. The tests check that every default option still prices correctly.
 
 ## Architecture
 
-```
-Browser (static pages + small islands)
-  │  bag + chosen kitchen in localStorage; prices computed with src/lib/pricing.ts
-  ▼
-Cloudflare Pages Functions  (functions/)
-  ├─ /api/orders      re-prices the bag server-side → HMAC-signs → CRM online_ordering webhook
-  ├─ /api/enquiries   signed sync event (no personal data) → optional Krayin web-form lead
-  ├─ /api/concierge   Groq → NVIDIA NIM structured output, or the house recommender (src/lib/recommend.ts)
-  └─ /api/health      which integrations are configured (never their values)
-  ▼
-Luminara CRM  POST {CRM_BASE_URL}/api/gourwest/webhooks/{online_ordering|customer_support}
-              X-Gourwest-Signature: sha256=<HMAC-SHA256(raw body, GOURWEST_WEBHOOK_SECRET)>
-```
-
-- **One source of truth for the menu:** `src/data/menu.ts` drives the pages, the cart, the server-side price check,
-  the allergen matrix, the concierge prompt and the structured data.
-- **The browser never sees the CRM secret** and never calls the CRM. Client totals are ignored; the function re-prices.
-- **No double-counted points:** the CRM keeps one event per order reference (since 2026-11-18), and the site adds its own layer: each checkout gets one id, the client
-  never auto-retries, and the required `ORDERS_KV` store replays the first result instead of re-sending.
-- **A CRM outage doesn't stop orders:** if the CRM is unreachable, slow, busy or answers with a 5xx, the order is
-  still taken (202, receipt shows "Queued for Luminara CRM") and its event is parked in `ORDERS_KV` under `outbox:<ref>`.
-  It is resent with the same reference on later API traffic (orders and `/api/health`, at most every 2 minutes) until
-  the CRM confirms; the CRM's one-event-per-reference rule makes the resend safe.
-- **Enquiries are never dropped:** they are stored as a CRM person + lead through a Krayin web form
-  (`CRM_WEB_FORM_ID`); if that is missing or fails, the guest is told and the form keeps their text.
-- **Security headers and a strict CSP** are in `public/_headers`; `scripts/csp.mjs` hashes inline scripts at build.
-
-## Run it locally
-
-Requires Node 22.23.4+ (CI uses Node 24).
-
-```powershell
-npm ci
-copy .dev.vars.example .dev.vars   # then edit the values
-npm run dev        # UI only, http://localhost:4321 (API routes are not served by astro dev)
-npm run preview    # full site + functions in the Cloudflare runtime, http://localhost:8788
+```mermaid
+flowchart LR
+  B["Browser<br/>static pages + small islands<br/>bag in localStorage"] -->|POST /api/orders| O
+  B -->|POST /api/enquiries| E
+  B -->|POST /api/concierge| C
+  subgraph F["Cloudflare Pages Functions"]
+    O["orders<br/>re-price · sign · send"]
+    E["enquiries"]
+    C["concierge"]
+    H["health"]
+  end
+  O <-->|replay + outbox| KV[("ORDERS_KV")]
+  O -->|HMAC-signed event| CRM["Back office / CRM<br/>webhook"]
+  E --> CRM
+  C --> AI["Groq → NVIDIA NIM<br/>→ house recommender"]
 ```
 
-### Connect the local Luminara CRM
+**Order flow.** Each checkout gets one id, so a double click can't send it twice. The function re-prices the bag from
+`src/data/menu.ts`, signs the raw body with `X-Gourwest-Signature: sha256=<HMAC-SHA256(body, GOURWEST_WEBHOOK_SECRET)>`
+and posts it to `{CRM_BASE_URL}/api/gourwest/webhooks/online_ordering`. If the back office is down, slow or busy, the
+order is still accepted (HTTP 202) and its event waits in `ORDERS_KV` under `outbox:<ref>`. It is resent with the same
+reference on later API traffic until the back office confirms.
 
-1. In `Luminara-CRM/.env` set `GOURWEST_WEBHOOK_SECRET` to a long random string (if it is empty the CRM signs with
-   `APP_KEY`, which must never be shared), then restart the CRM container.
-2. Put the **same** value in this project's `.dev.vars`, with `CRM_BASE_URL` pointing at the CRM
-   (the Docker app on this machine listens on `http://127.0.0.1:8888`).
-3. Seed demo members in the CRM: Gourwest hub → Seed demo, or `php artisan luminara:seed-gourwest --force`.
-4. `npm run preview`, order about $120 as `GW-AU-1006`, and watch Noah move from Silver to Gold in `/admin/gourwest`.
+**Secrets stay server-side.** The browser never sees the webhook secret or AI keys and never calls the back office.
+`GET /api/health` reports which integrations are configured, never their values.
 
-For catering and contact enquiries, create a Krayin web form (Settings → Web Forms, "create lead" on, with name,
-email, phone, lead title and description attributes) and set `CRM_WEB_FORM_ID` to its numeric id.
-Set `GROQ_API_KEY` (and optionally `NVIDIA_API_KEY` as the fallback) to switch the concierge to AI answers.
+## Tech stack
 
-After checkout, `/order/confirmed/` is a pickup tracker (stages estimated from the kitchen's prep time; the CRM reports no kitchen status), and the header shows a countdown pill until the order is collected.
+| Layer | Choice |
+| --- | --- |
+| Site | [Astro 7](https://astro.build) static output, TypeScript, plain CSS with design tokens |
+| 3D | [three.js](https://threejs.org) globe from Natural Earth land points |
+| API | Cloudflare Pages Functions, Workers KV, Turnstile |
+| Validation | Typed parsers on every API body; [Zod](https://zod.dev) for structured AI output |
+| AI | Groq (`openai/gpt-oss-120b`), NVIDIA NIM fallback, built-in recommender |
+| Quality | `astro check`, `tsc`, [Vitest](https://vitest.dev), GitHub Actions, Dependabot |
 
 ## Quality gates
 
-```powershell
-npm run verify     # astro check + functions/tests type-check + 65 unit/integration tests + production build
+```bash
+npm run verify   # astro check + functions/tests type-check + Vitest + production build with CSP hashing
 ```
 
-Tests cover pricing, tamper and size limits, the recommender, shared field rules, the CRM HMAC (checked against
-Node's own HMAC, which matches the CRM's PHP `hash_hmac`), idempotent replay, queuing and resending orders through
-CRM outages, 401 mapping, origin, content-type and honeypot guards, enquiry lead handling, and the
-concierge fallback.
-
-## Deploy
-
-See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the Cloudflare Pages and GitHub Actions setup and the go-live checklist.
+The 98 tests cover pricing, tampering and size limits, the recommender, shared field rules, the HMAC (checked against
+Node's own implementation), idempotent replay, queuing and resending through outages, auth and origin guards,
+enquiry handling, structured data and the concierge fallback. CI runs the same command on every push and pull request.
 
 ## Project layout
 
 ```
-src/data/        menu, kitchens, Club tiers, globe land points, icons (generated)
-src/lib/         pricing + recommender (pure, shared by browser and functions)
+src/data/        menu, kitchens, Club tiers, globe land points, icons
+src/lib/         pricing, recommender, SEO graph (pure, shared by browser and functions)
 src/components/  header, footer, globe, concierge, dish card, enquiry fields…
 src/pages/       every route
-src/scripts/     browser state, globe renderer, enquiry form handler
-functions/       Cloudflare Pages Functions and their shared CRM/HTTP helpers
+src/scripts/     browser state, globe renderer, form handlers
+functions/       Cloudflare Pages Functions and their shared helpers
 scripts/         build helpers (CSP hashes, globe points, icon set)
-design/          original Stitch exports and the Warm Editorial Hospitality design system
+design/          original design exports and the Warm Editorial Hospitality design system
 tests/           Vitest suites
+docs/            deployment guide and screenshots
 ```
+
+## Deploy
+
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers the Cloudflare Pages project, encrypted variables, the KV namespace,
+Turnstile, the GitHub Actions secrets and a go-live checklist. CI deploys `main` once `CLOUDFLARE_PAGES_PROJECT` is set;
+until then forks stay green and nothing deploys.
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md), and report security issues privately
+as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
-Code is MIT licensed (see [LICENSE](LICENSE)). Gourwest is a fictional brand: replace its name, logo and photos with
-your own before using this for a real business.
+Code is [MIT](LICENSE). Gourwest is a fictional brand: replace its name, logo and food photos with your own before
+using this for a real business.

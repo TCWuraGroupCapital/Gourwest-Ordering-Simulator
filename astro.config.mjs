@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 // Public origin used for canonical URLs, Open Graph and the sitemap. Set SITE_URL in the
 // Cloudflare Pages build environment once the production domain is attached.
-const site = process.env.SITE_URL ?? 'https://gourwest.example';
+const site = process.env.SITE_URL || 'https://gourwest.example';
 
 export default defineConfig({
   site,
